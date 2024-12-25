@@ -1,0 +1,22 @@
+Friends,
+
+New post: {{ post_title }}
+
+{{ post_content|safe|truncatewords:40 }}
+
+Read more: {{ post_url }}
+
+---
+
+You're receiving this because you are James' friend.
+
+---
+
+
+Unsubscribe: {{ unsubscribe_url }}
+
+
+
+
+
+

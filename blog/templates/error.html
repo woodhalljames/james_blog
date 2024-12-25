@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{error_message}}{% endblock %}
+
+{% block content %}
+<section>
+    <div class="container">
+        <div class="text-center">
+            <div>
+                <h1>{{ error_code }}</h1>
+                <h2>{{ error_message }}</h2>
+                <p class="small">What are you up to?</p>
+                <a href="/" class="subscribe-button">
+                    Return to Homepage
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

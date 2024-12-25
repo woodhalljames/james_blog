@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="max-w-md mx-auto bg-white p-8 rounded-lg shadow-md">
+        <h1 class="text-2xl font-bold mb-4">Unsubscribe Confirmation</h1>
+        <p class="mb-4">Are you sure you want to unsubscribe {{ subscriber.email }} from James?</p>
+        
+        <form method="post">
+            {% csrf_token %}
+            <div class="flex gap-4">
+                <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
+                    Unsubscribe
+                </button>
+                <a href="/" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,128 @@
+{% load blog_tags %}
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}James' Blog {% endblock %}</title>
+    <meta name="description" content="Writing about things that make life enjoyable.">
+    <meta name="keywords" content="life blog, personal essays, motorcycle, motobike, motorcycles, motobiking, finance, investing, stocks, life enjoyment, travel, how-to, magic the gathering, kayaking, software, moral good, finding happiness, well-being, mindfulness, joyful living, positive experiences, inspiration, personal growth, life reflection">
+    <meta name="author" content="James Woodhall">
+    <link rel="canonical" href="https://jameswoodhall.com/">
+    <script src="{% static 'js/like_button.js' %}" defer></script>
+    <script src="{% static 'js/newsletter.js' %}" defer></script>
+    <link rel="preload" href="{% static 'js/like_button.js' %}" as="script">
+
+    <!-- Styles -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <link rel="icon" type="image/x-icon" href="https://images.emojiterra.com/google/android-11/1024px/1f306.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <meta name="robots" content="index, follow">
+    <script type="application/ld+json">
+        {
+          "@context": "http://schema.org",
+          "@type": "Blog",
+          "name": "James' Blog",
+          "description": "Writing about things that make life enjoyable",
+          "url": "https://jameswoodhall.com",
+          "author": {
+            "@type": "Person",
+            "name": "James Woodhall"
+          }
+        }
+        </script>
+    <!-- Social Meta Tags -->
+    <meta property="og:title" content="James' Blog.">
+    <meta property="og:description" content="Writing about things that make life enjoyable.">
+    <meta property="og:image" content="{% static 'img/social.jpg' %}">
+    <meta property="og:url" content="{{ request.build_absolute_uri }}">
+    <meta property="og:type" content="article">
+    <meta name="twitter:card" content="{% static 'img/social.jpg'%}">
+    <meta property="twitter:url" content="{{ request.build_absolute_uri }}">
+    <meta property="twitter:title" content="James' Blog">
+    <meta property="twitter:description" content="Writing about things that make life enjoyable.">
+    <meta property="twitter:image" content="{% static 'profile_pic/social.jpg' %}">
+</head>
+
+<body class="main-container">
+    <div class="content-padding">
+        <!-- Profile Section -->
+        <div class="profile">
+            <a href="{% url 'blog:post_list' %}" class="profile-image-link">
+                <div class="profile-image">
+                    {% if profile_author and profile_author.profile_image %}
+                    <img src="{{ profile_author.profile_image.url }}" alt="A nice picture of James.">
+                {% else %}
+                    <img src="{% static 'img/default-profile.jpg' %}" alt="Default profile picture">
+                {% endif %} </div>
+            </a>
+            <div class="profile-content">
+                <a class="profile-user-name" href="{% url 'blog:post_list' %}">James_Woodhall</a>
+                <p class="profile-bio">Writing about things that make life enjoyable.</p>
+                <div class="profile-stats">
+                    <ul>
+                        <li><a class="profile-stat-count" href="{% url 'blog:post_list' %}">{% total_posts %} Posts</a></li>
+                        <li><a class="profile-stat-count" href="#newsletter-form" data-scroll-to="newsletter-form">{% total_subscribers %} Subscribers</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div id="content">
+            {% block content %}{% endblock %}
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-container">
+                <form id="newsletter-form" class="newsletter-form" method="post" action="{% url 'blog:subscribe' %}">
+                    {% csrf_token %}
+                    <input type="email" name="email" placeholder="Subscribe!" id="newsletter-email" required>
+                    <button type="submit" id="newsletter-submit" class="subscribe-button">🚀</button>
+                </form>
+                <div id="newsletter-message" class="newsletter-message"></div>
+               
+                <div class="footer-copyright">
+                    Made with pride in the USA. <br>
+                    &hairsp;©{% now "Y" %} James' Blog
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    {% block extra_js %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('[data-copy-url]').forEach(button => {
+                button.addEventListener('click', function() {
+                    var dummy = document.createElement('input'),
+                        text = window.location.href;
+
+                    document.body.appendChild(dummy);
+                    dummy.value = text;
+                    dummy.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(dummy);
+
+                    var originalIcon = this.innerHTML;
+                    this.innerHTML = '<i class="fas fa-check"></i>';
+                    this.classList.add('copied');
+
+                    setTimeout(() => {
+                        this.innerHTML = originalIcon;
+                        this.classList.remove('copied');
+                    }, 2000);
+                });
+            });
+        });
+    </script>
+    {% endblock %}
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

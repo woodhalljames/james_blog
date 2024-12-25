@@ -1,0 +1,1222 @@
+.post-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4px;
+  }
+  
+  .post-card {
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    position: relative;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+  
+  
+  .image-item {
+    width: 100%;
+    height: 100%;
+  }
+  /* Featured Image Styles */
+.featured-image-container {
+    width: 100%;
+    overflow: hidden;
+    margin-bottom: 1rem;
+    height: 100%;
+    text-align: center;
+  }
+  
+  .featured-image {
+    
+    max-width: 100%;
+    width:100%;
+    max-height: 700px;
+    object-fit: contain;
+    object-position: center;
+    border-radius: 8px;
+  }
+  
+  /* Ensure proper spacing after the image */
+  .post-header {
+    margin-top: 2rem;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .featured-image-container,
+    .featured-image {
+      height: 400px;
+      border-radius: 8px;
+    }
+  }
+  .post-content img {
+    max-width: 100%;
+    height: auto;
+    max-height: 600px;
+    
+    margin: 1rem auto;
+    display: block;
+    object-position: center;
+}
+.meta-divider {
+    height: 20px;
+    width: 1px;
+    background-color: #ddd;
+    margin: 0 .3rem;
+}
+@media (max-width: 768px) {
+    .post-content img {
+        max-height: 400px;
+        object-position: center;
+    }
+}
+  /* Single image styles */
+  .img-fluid {
+    border-radius: 8px;
+    box-shadow: none;
+    max-height: 600px;
+    width: auto;
+    display: block;
+    margin: 0 auto 30px;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .post-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    
+  }
+  
+  @media (max-width: 480px) {
+    .post-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  body {
+    font-family: 'Roboto', sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f9f9f9;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+  }
+  
+  /* Post body styles */
+  p {
+    font-size: 1rem;
+    line-height: 1.8;
+    color: #444;
+    margin-bottom: 20px;
+  }
+  
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 5px;
+  }
+  
+  h1, h2 {
+    text-align: center;
+    color: #2c3e50;
+  }
+  
+  /* Post title styles */
+  h1 {
+    font-size: 2rem;
+    color: #4d2c2c;
+    margin-bottom: 20px;
+    font-weight: 300;
+   
+    padding-bottom: 10px;
+  }
+  
+  .date {
+    font-style: italic;
+    color: #666666b9;
+  
+    font-size: 0.7rem;
+  }
+  
+  h2 {
+    margin-bottom: 20px;
+  }
+  
+  .post-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 40px;
+  }
+  
+  .post-card {
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    position: relative;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+  }
+  
+  @media (hover: hover) and (pointer: fine) {
+    .post-card:hover {
+        transform: scale(1.05);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    }
+}
+
+/* Active state for touch devices */
+@media (hover: none) {
+    .post-card:active {
+        transform: scale(0.98);
+        transition: transform 0.1s ease;
+    }
+}
+  
+  :root {
+    --footer-font-size: 10px;
+  }
+  
+  .footer { 
+    font-size: var(--footer-font-size);
+    color: #666666b9;
+    text-align: center;
+    padding: 15px 0;
+    position: relative;
+    padding-top: 40px;
+    width: 100%;
+  }
+  
+  .post-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+  
+  .post-images {
+      margin: 30px 0;
+  }
+  .image-item {
+    width: 100%;
+    height: 100%;
+  }
+  
+  .image-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .post-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .post-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  .profile {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 0;
+    
+  }
+  
+  .profile-image {
+    width: 150px;  
+    height: 150px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-right: 30px;
+    flex-shrink: 0;
+  }
+  
+  .profile-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .profile-content {
+    display: grid;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .profile-user-name {
+    font-size: 26px;
+    font-weight: 500;
+    margin-bottom: 10px;
+    justify-content: left;
+    text-decoration: none;
+    color: inherit;
+  }
+  
+  
+  .profile-image-link {
+    display: block;
+    text-decoration: none;
+  }
+  
+  .profile-image-link:hover {
+    opacity: 0.8;
+  }
+  
+  .profile-user-name:hover {
+    text-decoration: underline;
+  }
+  
+  .profile-bio {
+    font-size: 15px;
+    line-height: 1.4;
+    margin-bottom: 10px;
+    font-style: bold;
+  }
+  
+  .profile-edit-btn {
+    display: inline-flex;
+    align-items: center;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 14px;
+    align-self: flex-start;
+  }
+  
+  .profile-edit-btn:hover {
+    background-color: #333;
+  }
+  
+  .profile-edit-btn svg {
+    margin-left: 5px;
+  }
+  
+  .profile-stats {
+    margin-top: 5px;
+  }
+  
+  .profile-stats ul {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .profile-stats li {
+    font-size: 14px;
+    margin-right: 15px;
+  }
+  
+  .profile-stat-count {
+    font-weight: 600;
+    justify-content: left;
+    text-decoration: none;
+    color: inherit;
+  }
+  
+  .url {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 5px;
+    justify-content: left;
+    text-decoration: none;
+    color: inherit;
+  }
+  
+  @media (max-width: 600px) {
+    .profile {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+  
+    .profile-image {
+      margin-right: 0;
+      margin-bottom: 15px;
+    }
+  
+    .profile-content {
+      align-items: center;
+    }
+  
+    .profile-edit-btn {
+      align-self: center;
+    }
+  
+    .profile-stats ul {
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+  
+    .profile-stats li {
+      margin-bottom: 5px;
+      margin-right: 10px;
+    }
+  }
+  .container {
+    position: relative;
+  }
+  
+  .search-icon {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+  }
+  
+  .search-icon a {
+    color: #3498db;
+    font-size: 1.5em;
+    transition: color 0.3s ease;
+  }
+  
+  .search-icon a:hover {
+    color: #333;
+  }
+  
+  @media (max-width: 768px) {
+    .search-icon {
+        top: 10px;
+        right: 10px;
+    }
+  }
+  
+
+  
+  .post-detail {
+    background-color: #f9f9f9;
+    padding: 20px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  }
+  
+  .post-content {
+    margin-top: 20px;
+    margin-right: 20px;
+    margin-inline-start: 20px;
+  }
+  
+  .tags {
+    font-size: 0.7rem;
+    color: #666;
+  }
+  
+  .tags a {
+    color: #333;
+    text-decoration: none;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .tags a:hover {
+    border-bottom-color: #333;
+  }
+  
+  .subscribe-container {
+    display: flex;
+    justify-content: space-between;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 30px 15px;
+    background-color: #f9f9f9;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    border-radius: 8px;
+  }
+  
+  .subscribe-form {
+    flex: 1;
+    max-width: 45%;
+    padding-right: 30px;
+  }
+  
+  .subscribe-content {
+    flex: 1;
+    max-width: 45%;
+    padding-left: 30px;
+    border-left: 1px solid #e6e6e6;
+  }
+  
+  .subscribe-container h2,
+  .subscribe-container h3 {
+    color: #2c3e50;
+    margin-bottom: 20px;
+  }
+  
+  .subscribe-container form {
+    margin-bottom: 20px;
+  }
+  
+  .subscribe-container input[type="email"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+  
+  .subscribe-container button[type="submit"] {
+    width: 100%;
+    padding: 10px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .subscribe-container button[type="submit"]:hover {
+    background-color: #333;
+  }
+  
+  .subscribe-content ul {
+    padding-left: 20px;
+    margin-bottom: 20px;
+  }
+  
+  .subscribe-content li {
+    margin-bottom: 10px;
+  }
+  
+  .alert {
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+  }
+  
+  .alert-success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+  }
+  
+  .alert-error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+  }
+  
+  @media (max-width: 768px) {
+    .subscribe-container {
+      flex-direction: column;
+    }
+  
+    .subscribe-form,
+    .subscribe-content {
+      max-width: 100%;
+      padding: 0;
+    }
+  
+    .subscribe-content {
+      margin-top: 30px;
+      border-left: none;
+      border-top: 1px solid #e6e6e6;
+      padding-top: 30px;
+    }
+  }
+  
+  .comment-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 30px;
+    margin-top: 60px;
+  }
+  
+  .comments-container,
+  .comment-form-container {
+    flex: 1;
+  }
+  
+  .comment {
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+  }
+  
+  .comment .info {
+    font-size: 0.9em;
+    color: #666;
+    margin-bottom: 10px;
+  }
+  
+  .comment-form-container form {
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    padding: 15px;
+  }
+  
+  .comment-form-container form p {
+    margin-bottom: 15px;
+  }
+  
+  .comment-form-container form input[type="text"],
+  .comment-form-container form input[type="email"],
+  .comment-form-container form textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+  
+  .comment-form-container form button[type="submit"] {
+    width: 100%;
+    padding: 10px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .comment-form-container form button[type="submit"]:hover {
+    background-color: #2980b9;
+  }
+  
+  @media (max-width: 768px) {
+    .comment-section {
+      flex-direction: column;
+    }
+    
+    .comments-container,
+    .comment-form-container {
+      width: 100%;
+    }
+  }
+  
+  /* Search page styles */
+  .search-results-count {
+    color: #666;
+    margin-bottom: 20px;
+  }
+  
+  .search-results {
+    margin-top: 30px;
+  }
+  
+  .search-result-item {
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  }
+  
+  .search-result-item h4 {
+    margin-bottom: 10px;
+  }
+  
+  .search-result-item h4 a {
+    color: #2c3e50;
+    text-decoration: none;
+  }
+  
+  .search-result-item h4 a:hover {
+    text-decoration: underline;
+  }
+  
+  .search-result-excerpt {
+    color: #666;
+    font-size: 0.9em;
+  }
+  
+  .no-results {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 20px;
+  }
+  
+  .search-form-container {
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  
+  .search-form input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-bottom: 15px;
+  }
+  
+  .search-form button[type="submit"] {
+    width: 100%;
+    padding: 10px;
+  }
+  
+  @media (max-width: 768px) {
+    .search-form-container {
+      padding: 15px;
+    }
+  }
+  
+  .main-container {
+    max-width: 1200px;  /* Adjust this value as needed */
+    margin: 0 auto;
+    padding: 0 2px;  /* This adds padding on the left and right */
+    box-sizing: border-box;
+  }
+  
+  @media (min-width: 1240px) {  /* Adjust this breakpoint as needed */
+    .main-container {
+        padding: 0 40px;  /* Increase padding for larger screens */
+    }
+  }
+  
+  /* For very wide screens, you can add even more padding */
+  @media (min-width: 1440px) {
+    .main-container {
+        padding: 0 70px;
+    }
+  }
+  
+  .content-padding {
+    padding: 2px;
+  }
+  
+  .post-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    
+    padding-bottom: 10px;
+  }
+  
+  .post-meta {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .tags, .comments-count {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #666;
+  }
+  
+  .share-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    font-size: 14px;
+    border-radius: 50%;
+    color: #fff;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+}
+  
+  .share-button:hover {
+    opacity: 0.8;
+  }
+  
+  .facebook {
+    background-color: #3b5998;
+  }
+  
+  .twitter {
+    background-color: #1da1f2;
+  }
+  
+  .copy-link {
+    background-color: #333;
+  }
+  
+  .copy-link.copied {
+    background-color: #28a745;
+  }
+  
+  
+ 
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .carousel-image-container,
+    .single-image-container {
+      height: 400px;
+    }
+  }
+  
+  /* Optional: Add a subtle border or shadow for better visual separation */
+  
+  .like-button {
+    transition: all 0.3s ease;
+}
+
+.like-button:not(:disabled):hover {
+    transform: scale(1.1);
+}
+
+.like-button.liked {
+    background-color: #dc3545;  /* Bootstrap's danger color */
+    border-color: #dc3545;
+}
+
+.like-icon {
+    display: inline-block;
+    transition: transform 0.3s ease;
+}
+
+.liked .like-icon {
+    transform: scale(1.2);
+}
+
+.footer {
+    background-color: #f9f9f9;
+    padding: 40px 0;
+    margin-top: 20px;
+    border-top: 1px solid #eee;
+}
+
+.footer-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+.newsletter-form {
+    display: flex;
+    justify-content: center;
+}
+
+.newsletter-form input[type="email"] {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px 0 0 4px;  /* Rounded corners only on left side */
+    font-size: 0.9rem;
+    width: 200px;
+}
+
+.subscribe-button {
+    padding: 8px 12px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-left: none;  /* Remove left border since it's touching input */
+    border-radius: 0 4px 4px 0;  /* Rounded corners only on right side */
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: transform 0.2s ease;
+}
+
+.subscribe-button:hover {
+    transform: translateX(2px);
+}
+
+/* Add to your base.css */
+.newsletter-message {
+  font-size: 0.8rem;
+  margin-top: 0.5rem;
+  text-align: center;
+  transition: opacity 0.3s ease;
+}
+
+.newsletter-message.success {
+  color: #28a745;
+}
+
+.newsletter-message.error {
+  color: #dc3545;
+}
+
+.newsletter-form {
+  position: relative;
+}
+
+/* Disable styles for form during submission */
+.newsletter-form input:disabled,
+.newsletter-form button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Success state for the button */
+.subscribe-button.success {
+  background-color: #28a745;
+  transform: scale(1.1);
+}
+
+.footer-copyright {
+    text-align: center;
+    font-size: 0.8rem;
+    color: #81818193;
+    margin-top: 20px;
+}
+
+/* Post header and title styling */
+.post-header {
+    display: flex;
+    flex-direction: column;  /* Stack elements vertically */
+    width: 100%;
+    margin-bottom: 2rem;
+    position: relative;
+}
+
+.post-meta {
+    width: 100%;  /* Ensure full width */
+    display: flex;
+    flex-direction: column;
+    align-items: center;  /* Center all content if you want centered alignment */
+    /* Or remove align-items: center if you want left alignment */
+}
+
+.post-meta h1 {
+    width: 100%;  /* Ensure title takes full width */
+    margin-bottom: 1rem;
+    font-size: 2.4rem;
+    color: #333;
+    /* Choose ONE of these options: */
+    text-align: center;  /* For centered alignment */
+    /* text-align: left;     For left alignment */
+    
+    /* Remove any default margins that might affect alignment */
+    margin-left: 0;
+    margin-right: 0;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+/* Post meta information styling */
+.post-meta-info {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 0.5rem;
+      /* Center the meta information */
+    /* Or use justify-content: flex-start; for left alignment */
+}
+
+/* Ensure consistent spacing */
+.meta-item {
+    display: flex;
+    
+    gap: 0.5rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .post-meta h1 {
+        font-size: 1.75rem;  /* Slightly smaller on mobile */
+        /* Alignment remains consistent on mobile */
+    }
+    
+    .post-meta-info {
+        gap: 1rem;
+        justify-content: flex-start;  /* Left align on mobile if desired */
+    }
+}
+
+.meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.meta-item i {
+    font-size: 0.8rem;
+    color: #999;
+}
+
+.meta-item.tags a {
+    color: #666;
+    text-decoration: none;
+}
+
+
+.social-buttons {
+    display: flex;
+    gap: 0.7rem;
+    align-items: center;
+}
+.social-sidebar {
+    position: fixed;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 100;
+}
+
+@media (max-width: 768px) {
+    .post-meta-info {
+        gap: 0.4rem;
+        font-size: 0.8rem;
+    }
+}
+
+
+/* Featured Image Container styles */
+.featured-image-container {
+    width: 100%;
+    overflow: hidden;
+    margin-bottom: 1rem;
+    height: 100%;
+    text-align: center;
+    padding: 0;  /* Remove any padding that might restrict width */
+}
+
+.featured-image {
+    max-width: 100%;
+    width: 100%;
+    max-height: 700px;
+    object-fit: contain;
+    object-position: center;
+    border-radius: 8px;
+}
+
+/* Post content image styles */
+.post-content img {
+    max-width: 100%;
+    
+    max-height: 600px;
+    object-fit: contain;
+    margin: 1rem auto;
+    display: block;
+    object-position: center;
+}
+
+/* Mobile-specific adjustments */
+@media (max-width: 768px) {
+    .featured-image-container {
+        margin: 0;  /* Remove margins on mobile */
+        height: auto;  /* Allow height to adjust based on content */
+        max-height: none;  /* Remove max-height restriction */
+    }
+    
+    .featured-image {
+        max-height: none;  /* Remove max-height restriction */
+        height: auto;  /* Allow image to maintain aspect ratio */
+        object-fit: cover;  /* Ensure image covers available space */
+        margin: 0;  /* Remove margins */
+        border-radius: 8px;  /* Optional: remove border radius on mobile */
+    }
+
+    
+
+    /* Adjust main container padding */
+    .main-container {
+        padding: 0;  /* Remove padding on mobile */
+    }
+
+    .post-detail {
+        padding: 5px;  /* Reduce padding on mobile */
+    }
+}
+
+/* Additional optimization for very small screens */
+@media (max-width: 480px) {
+    .featured-image-container {
+        margin-top: -10px; /* Negative margin to remove any unwanted space */
+    }
+}
+
+/* Business Page Styles */
+.business-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+/* Professional Profile Section */
+.professional-profile {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    margin-bottom: 50px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.professional-image {
+    width: 200px;
+    height: 200px;
+    border-radius: 10px;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.professional-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.professional-content {
+    flex-grow: 1;
+}
+
+.professional-name {
+    font-size: 2.5rem;
+    color: #2c3e50;
+    margin-bottom: 10px;
+    font-weight: 600;
+    text-align: left;
+
+}
+
+.professional-title {
+    font-size: 1.2rem;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+.professional-links {
+    display: flex;
+    gap: 20px;
+}
+
+.professional-links a {
+    color: #3498db;
+    font-size: 1.5rem;
+    transition: color 0.3s ease;
+}
+
+.professional-links a:hover {
+    color: #2c3e50;
+}
+
+/* Resume Sections */
+.resume-section {
+    margin-bottom: 40px;
+    padding: 30px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.resume-section h2 {
+    color: #2c3e50;
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #e9ecef;
+}
+
+/* Skills Grid */
+.skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.skill-category h3 {
+    color: #3498db;
+    margin-bottom: 15px;
+    font-size: 1.2rem;
+}
+
+.skill-category ul {
+    list-style: none;
+    padding: 0;
+}
+
+.skill-category li {
+    margin-bottom: 8px;
+    color: #555;
+}
+
+/* Experience Items */
+.experience-item {
+    margin-bottom: 30px;
+}
+
+.experience-header {
+    margin-bottom: 15px;
+}
+
+.experience-header h3 {
+    color: #2c3e50;
+    font-size: 1.3rem;
+    margin-bottom: 5px;
+}
+
+.company {
+    color: #3498db;
+    font-weight: 500;
+    margin-right: 15px;
+}
+
+.dates {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.experience-details {
+    padding-left: 20px;
+    color: #555;
+}
+
+.experience-details li {
+    margin-bottom: 8px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .professional-profile {
+        flex-direction: column;
+        text-align: center;
+        padding: 15px;
+    }
+
+    .professional-image {
+        width: 150px;
+        height: 150px;
+        margin: 0 auto;
+    }
+
+    .professional-links {
+        justify-content: center;
+    }
+
+    .resume-section {
+        padding: 20px;
+    }
+
+    .skills-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Print Styles for Resume */
+@media print {
+    .business-container {
+        padding: 0;
+    }
+
+    .professional-links {
+        display: none;
+    }
+
+    .resume-section {
+        break-inside: avoid;
+        page-break-inside: avoid;
+        box-shadow: none;
+        border: 1px solid #eee;
+    }
+}

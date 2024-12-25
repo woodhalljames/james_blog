@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}James Woodhall | Professional Profile{% endblock %}
+
+{% block meta_description %}Software Engineer and Digital Marketer with expertise in web development, system architecture, marketing and digital communication.{% endblock %}
+
+{% block content %}
+<div class="business-container">
+    <!-- Professional Header Section -->
+    <div class="professional-profile">
+        <div class="professional-image">
+            <img src="{% static 'img/business_casual.jpg' %}" alt="James Woodhall - Professional Photo">
+        </div>
+        <div class="professional-content">
+            <h1 class="professional-name">James Woodhall</h1>
+            <p class="professional-title">Digital Marketer, Project Manager, and (aspiring) Software Engineer </p>
+            
+                
+                <a href="{{ business_profile.github }}" target="_blank" rel="noopener noreferrer">
+                    <i class="fab fa-github"></i> <p class="small">www.github.com/woodhalljames</p>
+                </a>
+                
+            <a href="mailto:{{ business_profile.email }}"><i class="fas fa-envelope"></i><p class='small'>woodhalljames@gmail.com</p></a> <i class="fas fa-phone"></i> <p class='small'>+1 724-759-4858</p>
+      
+            
+                <a href="{% static 'img/James_Woodhall_CV_24.pdf' %}" target="_blank" class="resume-link">
+                    <i class="fas fa-file-download"></i> <p class='small'>Download Resume/CV</p>
+                </a>
+            
+        </div>
+    </div>
+
+    <!-- Professional Summary -->
+    <section class="resume-section">
+        <h2>Professional Summary</h2>
+        <p class="summary-text">
+            Software engineer with a strong background in web development, international marketing, customer solutions, and project management. 
+            Passionate about creating value, scalable solutions, clear communication and a good technical experience.
+            <br><br>
+            I have spent the last odd year padding my developer experience, traveling, and spending time with family.  Now ready to forward my career in tech & software. 
+        </p>
+    </section>
+   
+    <!-- Skills Section -->
+    <section class="resume-section">
+        <h2>Technical Skills</h2>
+        <div class="skills-grid">
+            <div class="skill-category">
+                <h3>Languages</h3>
+                <ul>
+                    <li>Python</li>
+                    <li>JavaScript</li>
+                    <li>HTML/CSS</li>
+                    <!-- Add more skills -->
+                </ul>
+            </div>
+            <div class="skill-category">
+                <h3>Specialization</h3>
+                <ul>
+                    <li>eCommerce</li>
+                    <li>Email</li>
+                    <li>Automation</li>
+                    <li>AI</li>
+                    <li>UI/UX</li>
+                    
+                    <!-- Add more frameworks -->
+                </ul>
+            </div>
+            <!-- Add more skill categories -->
+        </div>
+    </section>
+
+    <!-- Work Experience -->
+    <section class="resume-section">
+        <h2>Professional Experience</h2>
+        <div class="experience-item">
+            <div class="experience-header">
+                <h3>Project Marketing Manager</h3>
+                <span class="company">Crypto Company (Defunct)</span>
+                <span class="dates">Mar. 2022- Nov. 2022</span>
+            </div>
+            <ul class="experience-details">
+                <li>Develop digital infrastructure and manage product resources for new FinTech and software solutions.</li>
+                <li>Lead cross-functional teams of developers, designers, and sales.</li>
+                <li>Improved marketing development infrastructure and launch principles by implementing flow processes and product go-to-market pipeline.  Improving brand identity and user experience.</li>
+<li>Generate copy and language for use in digital print and social media.</li>
+                <!-- Add more achievements -->
+            </ul>
+        </div>
+        <div class="experience-item">
+            <div class="experience-header">
+                <h3>Product Marketing Manager</h3>
+                <span class="company">Google</span>
+                <span class="dates">Jan. 2021 - Feb. 2022</span>
+            </div>
+            <ul class="experience-details">
+                <li>Develop dedicated social media campaign reporting systems, resulting in a cross-team increase in efficiency, understanding of brand sentiment, risk management and actionable items.</li>
+                <li>Work with product support teams to address digital inquiries and offer community support to dedicated Google Fi social accounts.</li>
+                <li>Utilize proprietary analytics software (Pulse), Meltwater, and data reporting channels to create self-help content. Resulting in an increase in customer self-help success stories and an increase in revenue.</li>
+<li>Collaborated alongside vendors, community enthusiasts, and influencers. </li>
+                <!-- Add more achievements -->
+            </ul>
+        </div>
+        <div class="experience-item">
+            <div class="experience-header">
+                <h3>Digital Marketing Manager</h3>
+                <span class="company">Sine Trading International</span>
+                <span class="dates">Oct. 2019 - COVID-19</span>
+            </div>
+            <ul class="experience-details">
+                <li>Develop and manage digital marketing services within technical limitations of proprietary software.</li>
+                <li>Conducted market analysis to identify international business development opportunities in Pacific Asia and Europe.  Managing international marketing channels to promote growth, partnerships, and business development.</li>
+                <li>Maintained intl’ relationships with Chinese & Indian suppliers through geopolitical risks.</li>
+                <!-- Add more achievements -->
+            </ul>
+        </div>
+        <!-- Add more experience items -->
+    </section>
+
+    <!-- Education -->
+    <section class="resume-section">
+        <h2>Education & Certifications</h2>
+        <div class="education-item">
+            <h5>B.S. Economics </h5>
+            <p>The Pennsylvania State University, 2017</p>
+        </div>
+        <div class="education-item">
+            <h5>Theory and Quantitative Application </h5>
+            <p>The Pennsylvania State University, 2017</p>
+        </div>
+        <div class="education-item">
+            <h5>Certifications: </h5>
+            <p>Python Web Development 2024</p>
+            <p>Automate the Boring Stuff 2019</p>
+            <p>Google Adsense 2017</p>
+        </div>
+    </section>
+
+    
+</div>
+{% endblock %}
