@@ -13,7 +13,7 @@ from decouple import config
 import os
 from pathlib import Path
 from django.core.wsgi import get_wsgi_application
-
+import dj_database_url
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -29,13 +29,13 @@ DEBUG = config("DEBUG")
 ALLOWED_HOSTS = ['jameswoodhall.com','www.jameswoodhall.com', '*']
 
 
-#SECURE_SSL_REDIRECT = True
-#SESSION_COOKIE_SECURE = True
-#CSRF_COOKIE_SECURE = True
-#SECURE_BROWSER_XSS_FILTER = True
-#SECURE_CONTENT_TYPE_NOSNIFF = True
-#X_FRAME_OPTIONS = 'DENY'
-#SITE_ID = 1
+SECURE_SSL_REDIRECT = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+X_FRAME_OPTIONS = 'DENY'
+SITE_ID = 1
 # Application definition
 
 INSTALLED_APPS = [
@@ -55,6 +55,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -66,7 +67,7 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = "james_blog.urls"
 
-
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 TEMPLATES = [
     {
