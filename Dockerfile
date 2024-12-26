@@ -12,4 +12,4 @@ RUN pip install -r requirements.txt
 
 COPY . .
 
-ENTRYPOINT ["gunicorn", "james_blog.wsgi"]
+ENTRYPOINT ["gunicorn", "james_blog.wsgi:application", "--bind", "0.0.0.0:${PORT:-8000}"]
