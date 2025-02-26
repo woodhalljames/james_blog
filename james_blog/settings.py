@@ -127,9 +127,9 @@ CLOUDFLARE_R2_CONFIG_OPTIONS = {
     "endpoint_url": CLOUDFLARE_R2_BUCKET_ENDPOINT,
     "default_acl": "public-read",
     "signature_version": "s3v4",
-
 }
 
+# Replace your current STORAGES configuration with:
 STORAGES = {
     "default": {
         "BACKEND": "helpers.cloudflare.storages.MediaFileStorage", #django-storages[s3]
@@ -140,6 +140,9 @@ STORAGES = {
         "OPTIONS": CLOUDFLARE_R2_CONFIG_OPTIONS
     } #staticfiles
 }
+
+# Use WhiteNoise for serving static files
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
