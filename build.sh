@@ -2,11 +2,11 @@
 # Exit on error
 set -e
 
-# Upgrade pip
-python -m pip install --upgrade pip
+# Use python3 instead of python
+python3 -m pip install --upgrade pip
 
 # Install requirements
-pip install -r requirements.txt
+python3 -m pip install -r requirements.txt
 
 # Collect static files
-python manage.py collectstatic --noinput
+python3 manage.py collectstatic --noinput
