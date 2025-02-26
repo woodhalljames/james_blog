@@ -136,13 +136,12 @@ STORAGES = {
         "OPTIONS": CLOUDFLARE_R2_CONFIG_OPTIONS
     }, #default user/image/file uploads
     "staticfiles": {
-        "BACKEND": "helpers.cloudflare.storages.StaticFileStorage",
-        "OPTIONS": CLOUDFLARE_R2_CONFIG_OPTIONS
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"
     } #staticfiles
 }
 
 # Use WhiteNoise for serving static files
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -306,5 +305,5 @@ CACHES = {
 }
 
 # Add these additional CKEditor settings
-CKEDITOR_5_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
+CKEDITOR_5_FILE_STORAGE = "helpers.cloudflare.storages.MediaFileStorage"
 CKEDITOR_5_THEME = 'light'
