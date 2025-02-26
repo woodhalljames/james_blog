@@ -132,29 +132,13 @@ CLOUDFLARE_R2_CONFIG_OPTIONS = {
 # Replace your current STORAGES configuration with:
 STORAGES = {
     "default": {
-        "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
-        "OPTIONS": {
-            "bucket_name": config("CLOUDFLARE_R2_BUCKET"),
-            "endpoint_url": config("CLOUDFLARE_R2_BUCKET_ENDPOINT"),
-            "access_key_id": config("CLOUDFLARE_R2_ACCESS_KEY"),
-            "secret_access_key": config("CLOUDFLARE_R2_SECRET_KEY"),
-            "file_overwrite": False,
-            "default_acl": "public-read",
-            "location": "media/",
-        }
-    },
+        "BACKEND": "helpers.cloudflare.storages.MediaFileStorage", #django-storages[s3]
+        "OPTIONS": CLOUDFLARE_R2_CONFIG_OPTIONS
+    }, #default user/image/file uploads
     "staticfiles": {
-        "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
-        "OPTIONS": {
-            "bucket_name": config("CLOUDFLARE_R2_BUCKET"),
-            "endpoint_url": config("CLOUDFLARE_R2_BUCKET_ENDPOINT"),
-            "access_key_id": config("CLOUDFLARE_R2_ACCESS_KEY"),
-            "secret_access_key": config("CLOUDFLARE_R2_SECRET_KEY"),
-            "file_overwrite": True,
-            "default_acl": "public-read",
-            "location": "static/",
-        }
-    }
+        "BACKEND": "helpers.cloudflare.storages.StaticFileStorage",
+        "OPTIONS": CLOUDFLARE_R2_CONFIG_OPTIONS
+    } #staticfiles
 }
 
 # Use WhiteNoise for serving static files
