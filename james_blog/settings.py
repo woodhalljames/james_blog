@@ -127,7 +127,6 @@ CLOUDFLARE_R2_CONFIG_OPTIONS = {
     "endpoint_url": CLOUDFLARE_R2_BUCKET_ENDPOINT,
     "default_acl": "public-read",
     "signature_version": "s3v4",
-    "querystring_auth": False  
 }
 
 STORAGES = {
