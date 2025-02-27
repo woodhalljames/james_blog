@@ -20,6 +20,9 @@ from django.conf import settings
 from django.views.decorators.cache import cache_page
 from django.utils.decorators import method_decorator
 from taggit.models import Tag
+from django.http import FileResponse
+import os
+from django.conf import settings
 
 
 class PublishedPostMixin:
@@ -241,3 +244,9 @@ def error_400(request, exception):
                'error_message': 'Bad Request',
                }
     return render(request, 'error.html', context, status=400)
+
+
+
+def download_cv(request):
+    filepath = os.path.join(settings.BASE_DIR, 'static', 'documents', 'James_W_CV_25.pdf')
+    return FileResponse(open(filepath, 'rb'), as_attachment=True, filename='James_Woodhall_CV.pdf')
