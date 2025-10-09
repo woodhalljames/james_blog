@@ -3,9 +3,11 @@ from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from django.conf import settings
 from django.urls import reverse
-from django.db.models import Q
 from django.utils.crypto import get_random_string
+import time
+import logging
 
+logger = logging.getLogger(__name__)
 
 
 def send_welcome_email(subscriber_id):
@@ -52,68 +54,138 @@ def send_welcome_email(subscriber_id):
             fail_silently=False,
         )
         
+        logger.info(f"Welcome email sent to {subscriber.email}")
         return True
 
     except Exception as e:
-        # Log the error - replace with proper logging in production
-        print(f"Error sending welcome email: {e}")
+        logger.error(f"Error sending welcome email: {e}")
         return False
 
 
-
-def send_post_notification(post_id):
+def send_post_notification_batch(post_id, delay_seconds=2):
     """
-    Sends blog post notifications to all active subscribers.
-    Handles failures silently to ensure maximum delivery.
+    Sends blog post notifications to all active subscribers with rate limiting.
     
-    This function follows a "best effort" approach - if an individual email fails,
-    it continues with the remaining subscribers. This ensures that one failed
-    delivery doesn't prevent other subscribers from receiving their notifications.
+    This function implements Gmail-friendly rate limiting by adding delays between
+    emails to avoid hitting daily sending limits. It provides detailed progress
+    logging and continues sending even if individual emails fail.
+    
+    Args:
+        post_id: The ID of the Post to notify about
+        delay_seconds: Seconds to wait between emails (default: 2)
+        
+    Returns:
+        dict: Statistics about the email sending process
     """
     from .models import Post, NewsletterSubscriber
     
+    results = {
+        'success': True,
+        'total_subscribers': 0,
+        'emails_sent': 0,
+        'emails_failed': 0,
+        'failed_emails': [],
+        'time_elapsed': 0
+    }
+    
+    start_time = time.time()
+    
     try:
-        # Get the post details first - if this fails, we shouldn't try sending any emails
-        post = Post.objects.get(id=post_id)
-        print(f"Found post: {post.title}")  # Keep this logging for basic monitoring
+        # Get the post
+        post = Post.objects.select_related('author').get(id=post_id)
+        logger.info(f"Starting email notification for post: {post.title}")
         
-        # Get all active subscribers in one query
-        active_subscribers = NewsletterSubscriber.objects.filter(is_active=True)
-        print(f"Found {active_subscribers.count()} subscribers")
+        # Get all active subscribers
+        subscribers = NewsletterSubscriber.objects.filter(is_active=True)
+        results['total_subscribers'] = subscribers.count()
         
-        # Track successful sends
-        successful_sends = 0
+        if results['total_subscribers'] == 0:
+            logger.warning("No active subscribers found")
+            return results
         
-        # Process each subscriber - using a simple loop for clarity
-        for subscriber in active_subscribers:
+        logger.info(f"Found {results['total_subscribers']} active subscribers")
+        
+        # Prepare email context (same for all subscribers except unsubscribe_url)
+        site_url = settings.SITE_URL.rstrip('/')
+        post_url = f"{site_url}{post.get_absolute_url()}"
+        
+        # Get excerpt (first 200 characters of content, stripped of HTML)
+        content_text = strip_tags(post.content)
+        excerpt = content_text[:200] + "..." if len(content_text) > 200 else content_text
+        
+        base_context = {
+            'post_title': post.title,
+            'post_url': post_url,
+            'post_excerpt': excerpt,
+            'post_date': post.published_at.strftime('%B %d, %Y') if post.published_at else 'Recently',
+            'reading_time': post.reading_time,
+            'site_name': settings.SITE_NAME,
+        }
+        
+        # Add featured image if available
+        if post.featured_image:
+            base_context['post_featured_image'] = f"{site_url}{post.featured_image.url}"
+        
+        # Send emails with rate limiting
+        for index, subscriber in enumerate(subscribers, start=1):
             try:
-                # Create email content for this subscriber
-                context = {
-                    'post_title': post.title,
-                    'post_url': f"{settings.SITE_URL}{post.get_absolute_url()}",
-                    'post_content': post.content,  # Full content - template will handle truncation
-                    'site_name': settings.SITE_NAME,
-                    'unsubscribe_url': f"{settings.SITE_URL}{reverse('blog:unsubscribe', args=[subscriber.confirmation_token])}"
-                }
+                # Add subscriber-specific unsubscribe URL
+                context = base_context.copy()
+                context['unsubscribe_url'] = f"{site_url}{reverse('blog:unsubscribe', args=[subscriber.confirmation_token])}"
                 
-                # Render and send the email
-                html_message = render_to_string('emails/new_post_notification.html', context)
+                # Render email templates
+                html_message = render_to_string('emails/post_notification_email.html', context)
+                plain_message = render_to_string('emails/post_notification_email.txt', context)
+                
+                # Send email
                 send_mail(
                     subject=f"New Post: {post.title}",
-                    message=strip_tags(html_message),
+                    message=plain_message,
                     html_message=html_message,
                     from_email=settings.DEFAULT_FROM_EMAIL,
                     recipient_list=[subscriber.email],
-                    fail_silently=True  # Key setting for silent failure handling
+                    fail_silently=False,
                 )
-                successful_sends += 1
                 
-            except:  # Catch any errors but continue with next subscriber
+                results['emails_sent'] += 1
+                logger.info(f"Progress: {results['emails_sent']}/{results['total_subscribers']} - Sent to {subscriber.email}")
+                
+                # Rate limiting: wait before sending next email (except for last one)
+                if index < results['total_subscribers']:
+                    time.sleep(delay_seconds)
+                
+            except Exception as email_error:
+                results['emails_failed'] += 1
+                results['failed_emails'].append(subscriber.email)
+                logger.error(f"Failed to send to {subscriber.email}: {str(email_error)}")
+                # Continue with next subscriber even if this one failed
                 continue
         
-        # Return a simple success indication
-        return {'success': True, 'sent': successful_sends}
+        results['time_elapsed'] = round(time.time() - start_time, 2)
+        
+        logger.info(
+            f"Email batch complete. Sent: {results['emails_sent']}, "
+            f"Failed: {results['emails_failed']}, "
+            f"Time: {results['time_elapsed']}s"
+        )
+        
+        return results
+        
+    except Post.DoesNotExist:
+        results['success'] = False
+        results['error'] = 'Post not found'
+        logger.error(f"Post with id {post_id} not found")
+        return results
         
     except Exception as e:
-        print(f"Critical error in send_post_notification: {e}")  # Keep critical error logging
-        return {'success': False, 'message': str(e)}
+        results['success'] = False
+        results['error'] = str(e)
+        results['time_elapsed'] = round(time.time() - start_time, 2)
+        logger.error(f"Critical error in send_post_notification_batch: {e}")
+        return results
+
+
+# Keep old function name for backwards compatibility
+def send_post_notification(post_id):
+    """Wrapper for backwards compatibility"""
+    return send_post_notification_batch(post_id)

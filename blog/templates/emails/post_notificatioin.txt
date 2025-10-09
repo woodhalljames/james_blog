@@ -1,0 +1,18 @@
+{{ post_title }}
+{{ "=" * post_title|length }}
+
+By James | {{ post_date }} | {{ reading_time }} min read
+
+{{ post_excerpt|striptags }}
+
+Read the full post here:
+{{ post_url }}
+
+---
+
+You're receiving this because you subscribed to James' blog updates.
+
+To unsubscribe from these notifications, visit:
+{{ unsubscribe_url }}
+
+© {% now "Y" %} James' Blog

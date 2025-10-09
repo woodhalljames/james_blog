@@ -4,40 +4,39 @@ from django.urls import reverse
 from django.contrib.auth.models import User
 from django.utils import timezone
 from django.core.exceptions import ValidationError
-from django_ckeditor_5.fields import CKEditor5Field
+from django_summernote.fields import SummernoteTextField
+from django_summernote.models import AbstractAttachment
 from taggit.managers import TaggableManager
 from PIL import Image
 from io import BytesIO
 import os
-import json 
+import json
 from django.utils.html import strip_tags
 from django.core.files import File
 from django.conf import settings
-from .tasks import send_post_notification
 
 
-# Create your models here.
 class Author(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     bio = models.TextField(
-        max_length=500, 
-        blank=True, 
+        max_length=500,
+        blank=True,
         help_text="Professional bio"
     )
     profile_image = models.ImageField(
-        upload_to='authors/', 
+        upload_to='authors/',
         blank=True
     )
 
-   
     def full_name(self):
         return self.user.get_full_name()
-    
-    
 
     class Meta:
         verbose_name = 'Author'
         verbose_name_plural = 'Authors'
+
+    def __str__(self):
+        return self.full_name() or self.user.username
 
 
 class Post(models.Model):
@@ -51,12 +50,14 @@ class Post(models.Model):
         help_text="URL-friendly version of the title"
     )
     author = models.ForeignKey(
-        Author, 
+        Author,
         on_delete=models.PROTECT,
         related_name='posts'
     )
-    content = CKEditor5Field('Content', config_name='default')
-    
+    content = SummernoteTextField(
+        help_text="Blog post content with rich text formatting and images"
+    )
+
     # SEO Fields
     meta_description = models.CharField(
         max_length=160,
@@ -68,7 +69,7 @@ class Post(models.Model):
         blank=True,
         help_text="Comma-separated keywords for SEO"
     )
-    
+
     # Image Fields
     featured_image = models.ImageField(
         upload_to='blog/%Y/%m/',
@@ -80,7 +81,7 @@ class Post(models.Model):
         blank=True,
         help_text="Alt text for featured image"
     )
-    
+
     # Publishing Fields
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -95,13 +96,13 @@ class Post(models.Model):
         help_text="Set to true to make this post public"
     )
     view_count = models.PositiveIntegerField(default=0)
+
     # Categorization Fields
-    
     tags = TaggableManager(
         blank=True,
         help_text="Add relevant tags to help readers find related content"
     )
-    
+
     # Additional Fields
     reading_time = models.PositiveIntegerField(
         default=5,
@@ -135,19 +136,19 @@ class Post(models.Model):
         """Creates a thumbnail of the featured image"""
         if not self.featured_image:
             return
-            
+
         image = Image.open(self.featured_image)
-        
+
         if image.mode == 'RGBA':
             image = image.convert('RGB')
-        
+
         image.thumbnail(size, Image.Resampling.LANCZOS)
-        
+
         thumb_io = BytesIO()
         image.save(thumb_io, 'JPEG', quality=85)
-        
+
         thumbnail_name = f'thumb_{os.path.basename(self.featured_image.name)}'
-        
+
         self.thumbnail.save(
             thumbnail_name,
             File(thumb_io),
@@ -172,7 +173,7 @@ class Post(models.Model):
             published_at__lte=timezone.now()
         ).exclude(id=self.id)
         return related_posts.distinct()[:3]
-    
+
     def get_thumbnail_url(self):
         """Returns the thumbnail URL or featured image URL as fallback"""
         if self.thumbnail:
@@ -189,7 +190,7 @@ class Post(models.Model):
         try:
             site_url = settings.SITE_URL.rstrip('/')
             article_url = f"{site_url}{self.get_absolute_url()}"
-            
+
             schema = {
                 "@context": "https://schema.org",
                 "@type": "BlogPosting",
@@ -224,7 +225,7 @@ class Post(models.Model):
 
             schema = {k: v for k, v in schema.items() if v is not None}
             return json.dumps(schema, ensure_ascii=False)
-        
+
         except AttributeError:
             print("Warning: SITE_URL not properly configured in settings")
             return "{}"
@@ -236,7 +237,7 @@ class Post(models.Model):
         """
         try:
             site_url = settings.SITE_URL.rstrip('/')
-            
+
             schema = {
                 "@context": "https://schema.org",
                 "@type": "BreadcrumbList",
@@ -281,7 +282,7 @@ class Post(models.Model):
         {self.generate_breadcrumb_schema()}
         </script>
         """
-    
+
     def save(self, *args, **kwargs):
         """
         Override the save method to handle automatic field population
@@ -289,20 +290,21 @@ class Post(models.Model):
         """
         if not self.slug:
             self.slug = slugify(self.title)
-        
+
         if self.is_published and not self.published_at:
             self.published_at = timezone.now()
-            
+
         if not self.meta_description and self.content:
             stripped_content = strip_tags(self.content)
-            self.meta_description = (stripped_content[:157] + "..." 
-                                   if len(stripped_content) > 160 
+            self.meta_description = (stripped_content[:157] + "..."
+                                   if len(stripped_content) > 160
                                    else stripped_content)
 
         if not self.id or (self.featured_image and not self.thumbnail):
             self.create_thumbnail()
 
         super().save(*args, **kwargs)
+
 
 class PostRevision(models.Model):
     post = models.ForeignKey(
@@ -330,28 +332,112 @@ class PostRevision(models.Model):
 
     def __str__(self):
         return f"Revision of {self.post.title} - {self.revision_date}"
-    
+
 
 class NewsletterSubscriber(models.Model):
     email = models.EmailField(unique=True)
     subscribed_at = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
     confirmation_token = models.CharField(max_length=100, blank=True)
-    
+
     def __str__(self):
         return self.email
-    
+
     class Meta:
         verbose_name = 'Newsletter Subscriber'
         verbose_name_plural = 'Newsletter Subscribers'
 
 
 class PostLike(models.Model):
-    post=models.ForeignKey(Post, on_delete=models.CASCADE, related_name='likes')
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='likes')
     session_key = models.CharField(max_length=40)
     created_at = models.DateTimeField(auto_now_add=True)
 
-    class Meta: 
+    class Meta:
         unique_together = ['post', 'session_key']
 
 
+class SummernoteAttachment(AbstractAttachment):
+    """Model to store Summernote attachments/images"""
+    
+    def __str__(self):
+        return self.name if self.name else str(self.file.name)
+
+    class Meta:
+        verbose_name = 'Summernote Attachment'
+        verbose_name_plural = 'Summernote Attachments'
+
+
+# Business Profile Model
+
+class BusinessProfile(models.Model):
+    """
+    Model for business/professional profile information.
+    """
+    name = models.CharField(
+        max_length=200, 
+        default="James Woodhall",
+        help_text="Your full name"
+    )
+    title = models.CharField(
+        max_length=200, 
+        default="Web Developer & Digital Marketer",
+        help_text="Your professional title"
+    )
+    email = models.EmailField(
+        default="woodhalljames@gmail.com",
+        help_text="Contact email"
+    )
+    summary = models.TextField(
+        blank=True,
+        default='',
+        help_text="Brief professional summary (optional)"
+    )
+
+    phone = models.CharField(
+        max_length=50, 
+        default="+1 724-759-4858",
+        help_text="Contact phone number"
+    )
+    github = models.URLField(
+        blank=True, 
+        default="https://github.com/woodhalljames",
+        help_text="GitHub profile URL"
+    )
+    linkedin = models.URLField(
+        blank=True,
+        help_text="LinkedIn profile URL"
+    )
+    
+    professional_image = models.ImageField(
+        upload_to='business/',
+        blank=True,
+        help_text="Professional headshot photo"
+    )
+    
+    resume_pdf = models.FileField(
+        upload_to='business/resumes/',
+        blank=True,
+        help_text="Upload your resume/CV PDF for download"
+    )
+    
+    content = SummernoteTextField(
+        help_text="Your professional profile content - add your summary, experience, projects, education, etc.",
+        blank=True
+    )
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        verbose_name = 'Business Profile'
+        verbose_name_plural = 'Business Profile'
+    
+    def __str__(self):
+        return f"{self.name} - {self.title}"
+    
+    @classmethod
+    def get_profile(cls):
+        """Get or create the profile instance"""
+        profile, created = cls.objects.get_or_create(pk=1)
+        return profile

@@ -1,151 +1,424 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}James Woodhall | Professional Profile{% endblock %}
+{% block title %}{{ profile.name }} | Professional Profile{% endblock %}
 
-{% block meta_description %}Software Engineer and Digital Marketer with expertise in web development, marketing, and digital communication.{% endblock %}
+{% block meta_description %}{{ profile.title }} - Professional web developer and digital marketing specialist.{% endblock %}
 
 {% block content %}
 <style>
+    /* Hide the blog profile sidebar on business page */
     .profile { display: none; }
-  </style>
+    
+    /* HIDE FOOTER SUBSCRIBE FORM ON BUSINESS PAGE */
+    .newsletter-form { display: none !important; }
+    #newsletter-message { display: none !important; }
+    
+    /* Business page specific styles */
+    .business-container {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    
+    /* Professional Header with Simple, Clean Design */
+    .professional-header {
+        margin-bottom: 50px;
+        padding: 50px 30px;
+        background: white;
+        border-radius: 16px;
+        color: #2c3e50;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        display: flex;
+        align-items: center;
+        gap: 40px;
+        text-align: left;
+    }
+    
+    .professional-left {
+        flex-shrink: 0;
+    }
+
+    
+    .professional-image {
+        margin: 0;
+    }
+    
+    .professional-image img {
+        width: 200px;
+        height: 240px;
+        border-radius: 8px;
+        object-fit: cover;
+        object-position: center 35%;
+        border: 3px solid #e9ecef;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    
+    .professional-right {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .professional-name {
+        font-size: 3rem;
+        margin: 0;
+        font-weight: 700;
+        color: #2c3e50;
+    }
+    
+    .professional-title {
+        font-size: 1.4rem;
+        margin: 0;
+        font-weight: 400;
+        color: #6c757d;
+    }
+    
+    /* Contact Info with Simple Styling */
+    .contact-info {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        gap: 25px;
+        flex-wrap: wrap;
+        margin: 0;
+    }
+    
+    .contact-info a,
+    .contact-info span {
+        color: #495057;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 1rem;
+        transition: color 0.3s ease;
+    }
+    
+    .contact-info a {
+        color: #667eea;
+    }
+    
+    .contact-info a:hover {
+        color: #5568d3;
+        text-decoration: underline;
+    }
+    
+    .contact-info i {
+        font-size: 1.2rem;
+    }
+    
+    /* Resume Download Button - Keep it Fancy */
+    .resume-download {
+        margin: 0;
+    }
+    
+    .resume-download a {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 14px 35px;
+        border-radius: 30px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 1.05rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    }
+    
+    .resume-download a:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    }
+    
+    .resume-download a i {
+        font-size: 1.2rem;
+        transition: transform 0.3s ease;
+    }
+    
+    .resume-download a:hover i {
+        transform: translateY(2px);
+    }
+    
+    /* Professional Content - Enhanced Styling */
+    .professional-content {
+        background: white;
+        padding: 50px;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        line-height: 1.8;
+        text-align: left; /* Content itself should be left-aligned for readability */
+    }
+    
+    /* Enhanced Summernote Content Styling */
+    .professional-content h2 {
+        color: #2c3e50;
+        margin-top: 40px;
+        margin-bottom: 20px;
+        padding-bottom: 12px;
+        border-bottom: 3px solid #667eea;
+        font-size: 2rem;
+        font-weight: 600;
+    }
+    
+    .professional-content h2:first-child {
+        margin-top: 0;
+    }
+    
+    .professional-content h3 {
+        color: #34495e;
+        margin-top: 30px;
+        margin-bottom: 15px;
+        font-size: 1.5rem;
+        font-weight: 600;
+    }
+    
+    .professional-content h4 {
+        color: #667eea;
+        margin-top: 25px;
+        margin-bottom: 12px;
+        font-size: 1.2rem;
+        font-weight: 600;
+    }
+    
+    .professional-content ul,
+    .professional-content ol {
+        margin: 20px 0;
+        padding-left: 35px;
+    }
+    
+    .professional-content li {
+        margin: 10px 0;
+        line-height: 1.8;
+        color: #555;
+    }
+    
+    .professional-content li::marker {
+        color: #667eea;
+        font-weight: bold;
+    }
+    
+    .professional-content p {
+        margin: 18px 0;
+        color: #555;
+        font-size: 1.05rem;
+    }
+    
+    .professional-content a {
+        color: #667eea;
+        text-decoration: none;
+        font-weight: 500;
+        border-bottom: 1px solid transparent;
+        transition: all 0.3s ease;
+    }
+    
+    .professional-content a:hover {
+        border-bottom-color: #667eea;
+    }
+    
+    .professional-content img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
+        margin: 30px 0;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    
+    .professional-content blockquote {
+        border-left: 4px solid #667eea;
+        padding-left: 20px;
+        margin: 25px 0;
+        font-style: italic;
+        color: #666;
+        background: #f8f9fa;
+        padding: 15px 20px;
+        border-radius: 4px;
+    }
+    
+    .professional-content table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 25px 0;
+    }
+    
+    .professional-content table th,
+    .professional-content table td {
+        padding: 12px;
+        border: 1px solid #ddd;
+        text-align: left;
+    }
+    
+    .professional-content table th {
+        background: #667eea;
+        color: white;
+        font-weight: 600;
+    }
+    
+    .professional-content table tr:nth-child(even) {
+        background: #f8f9fa;
+    }
+    
+    /* Code blocks if used */
+    .professional-content code {
+        background: #f4f4f4;
+        padding: 2px 6px;
+        border-radius: 3px;
+        font-family: 'Courier New', monospace;
+        font-size: 0.9em;
+        color: #e83e8c;
+    }
+    
+    .professional-content pre {
+        background: #2d2d2d;
+        color: #f8f8f2;
+        padding: 20px;
+        border-radius: 6px;
+        overflow-x: auto;
+        margin: 20px 0;
+    }
+    
+    .professional-content pre code {
+        background: none;
+        color: inherit;
+        padding: 0;
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .professional-header {
+            padding: 35px 20px;
+            flex-direction: column;
+            text-align: center;
+            gap: 20px;
+        }
+        
+        .professional-left {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .professional-image img {
+            width: 160px;
+            height: 200px;
+        }
+        
+        .professional-right {
+            align-items: center;
+        }
+        
+        .professional-name {
+            font-size: 2.2rem;
+            text-align: center;
+        }
+        
+        .professional-title {
+            font-size: 1.15rem;
+            text-align: center;
+        }
+        
+        .contact-info {
+            font-size: 0.9rem;
+            gap: 15px;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .professional-content {
+            padding: 30px 20px;
+            text-align: left;
+        }
+        
+        .professional-content h2 {
+            font-size: 1.6rem;
+        }
+        
+        .professional-content h3 {
+            font-size: 1.3rem;
+        }
+        
+        .business-container {
+            text-align: center;
+        }
+    }
+    
+    /* Print Styles */
+    @media print {
+        .professional-header {
+            box-shadow: none !important;
+            border: 1px solid #ddd;
+        }
+        
+        .resume-download {
+            display: none;
+        }
+    }
+</style>
+
 <div class="business-container">
-    <!-- Professional Header Section -->
-    <div class="professional-profile">
-        <div class="professional-image">
-            <img src="{% static 'img/business_casual.jpg' %}" alt="James Woodhall - Professional Photo">
+    <!-- Professional Header -->
+    <div class="professional-header">
+        <!-- Left side - Photo -->
+        <div class="professional-left">
+            <div class="professional-image">
+                {% if profile.professional_image %}
+                    <img src="{{ profile.professional_image.url }}" alt="{{ profile.name }} - Professional Photo">
+                {% else %}
+                    <img src="{% static 'img/default-avatar.jpg' %}" alt="{{ profile.name }}">
+                {% endif %}
+            </div>
         </div>
-        <div class="professional-content">
-            <h1 class="professional-name">James Woodhall</h1>
-            <p class="professional-title">Web Developer & Digital Marketer</p>
+        
+        <!-- Right side - All info -->
+        <div class="professional-right">
+            <h1 class="professional-name">{{ profile.name }}</h1>
+            <p class="professional-title">{{ profile.title }}</p>
             
+            <div class="contact-info">
+                {% if profile.github %}
+                <a href="{{ profile.github }}" target="_blank" rel="noopener noreferrer">
+                    <i class="fab fa-github"></i>
+                    <span>GitHub</span>
+                </a>
+                {% endif %}
                 
-                <a href="{{ business_profile.github }}" target="_blank" rel="noopener noreferrer">
-                    <i class="fab fa-github"></i> <p class="small">www.github.com/woodhalljames</p>
+                <a href="mailto:{{ profile.email }}">
+                    <i class="fas fa-envelope"></i>
+                    <span>{{ profile.email }}</span>
                 </a>
                 
-            <a href="mailto:{{ business_profile.email }}"><i class="fas fa-envelope"></i><p class='small'>woodhalljames@gmail.com</p></a> <i class="fas fa-phone"></i> <p class='small'>+1 724-759-4858</p>
-      
-            
-                <a href="{% static 'img/James_W_CV_25.pdf' %}" target="_blank" class="resume-link">
-                    <i class="fas fa-file-download"></i> <p class='small'>Download Resume/CV</p>
+                <span>
+                    <i class="fas fa-phone"></i>
+                    <span>{{ profile.phone }}</span>
+                </span>
+                
+                {% if profile.linkedin %}
+                <a href="{{ profile.linkedin }}" target="_blank" rel="noopener noreferrer">
+                    <i class="fab fa-linkedin"></i>
+                    <span>LinkedIn</span>
                 </a>
+                {% endif %}
+            </div>
             
+            {% if profile.resume_pdf %}
+            <div class="resume-download">
+                <a href="{{ profile.resume_pdf.url }}" target="_blank">
+                    <i class="fas fa-file-download"></i>
+                    <span>Download Resume/CV</span>
+                </a>
+            </div>
+            {% endif %}
         </div>
     </div>
 
-    <!-- Professional Summary -->
-    <section class="resume-section">
-        <h2>Professional Summary</h2>
-        <p class="summary-text">
-           Technical talent with a strong background in web development, communications, international marketing, customer solutions, and project management. Passionate about creating value, scalable solutions, clear communication, and a good technical experience.
-         </p>
-    </section>
-   
-    <!-- Skills Section -->
-    <section class="resume-section">
-        <h2>Technical Skills</h2>
-        <div class="skills-grid">
-            <div class="skill-category">
-                <h3>Languages</h3>
-                <ul>
-                    <li>Python</li>
-                    <li>Django</li>
-                    <li>JavaScript</li>
-                    <li>REST APIs</li>
-                    <li>HTML/CSS</li>
-                    <li>Git/Bash</li>
-                    <li>AI Prompting</li>
-                    
-                    <!-- Add more skills -->
-                </ul>
-            </div>
-            <div class="skill-category">
-                <h3>Specialization</h3>
-                <ul>
-                    <li>Web Development</li>
-                    <li>Full-Stack Solutions</li>
-                    <li>eCommerce</li>
-                    <li>UI/UX</li>
-                    <li>CI/CD</li>
-                    <li>Automation</li>
-                    <li>AI Integration</li>
-                   
-                    
-                    <!-- Add more frameworks -->
-                </ul>
-            </div>
-            <!-- Add more skill categories -->
-        </div>
-    </section>
-
-    <!-- Work Experience -->
-    <section class="resume-section">
-        <h2>Professional Experience</h2>
-        <div class="experience-item">
-            <div class="experience-header">
-                <h3>Project Marketing Manager</h3>
-                <span class="company">InfiniteWorld</span>
-                <span class="dates">Mar. 2022 - Sept. 2022</span>
-            </div>
-            <ul class="experience-details">
-                <li>Develop digital infrastructure and manage product resources for finance and software solutions.</li>
-                <li>Lead cross-functional teams of developers, designers, and sales.</li>
-                <li>Improve digital marketing infrastructure and resource management principles.  Implementing flow processes and product go-to-market pipeline’s.  Benefiting brand identity and user experience.</li>
-<li>Generate copy and language for use in digital print and social media.</li>
-                <!-- Add more achievements -->
-            </ul>
-        </div>
-        <div class="experience-item">
-            <div class="experience-header">
-                <h3>Product Marketing Manager</h3>
-                <span class="company">Google</span>
-                <span class="dates">Jan. 2021 - Feb. 2022</span>
-            </div>
-            <ul class="experience-details">
-                <li>Develop dedicated social media campaign reporting systems, resulting in a cross-team increase in efficiency, understanding of brand sentiment, risk management and actionable items.</li>
-                <li>Work with product support teams to address digital inquiries and offer community support to dedicated Google Fi social accounts.</li>
-                <li>Utilize proprietary analytics software, Meltwater, and data reporting channels to create self-help content. Resulting in an increase in customer self-help success stories and an increase in revenue.</li>
-<li>Collaborated alongside vendors, community enthusiasts, and influencers. </li>
-                <!-- Add more achievements -->
-            </ul>
-        </div>
-        <div class="experience-item">
-            <div class="experience-header">
-                <h3>Digital Marketing Manager</h3>
-                <span class="company">Sine Trading International</span>
-                <span class="dates">Oct. 2019 - COVID-19</span>
-            </div>
-            <ul class="experience-details">
-                <li>Developed and managed marketing services within technical limitations of proprietary software.</li>
-                <li>Conducted market analysis to identify international business development opportunities in Pacific Asia and Europe.</li>
-                <li>Managed international marketing channels to promote growth, partnerships, and business development.
-                </li>
-                <!-- Add more achievements -->
-            </ul>
-        </div>
-        <!-- Add more experience items -->
-    </section>
-
-    <!-- Education -->
-    <section class="resume-section">
-        <h2>Education & Certifications</h2>
-        <div class="education-item">
-            <h5>B.S. Economics </h5>
-            <p>The Pennsylvania State University, 2017</p>
-        </div>
-        <div class="education-item">
-            <h5>Theory and Quantitative Application </h5>
-            <p>The Pennsylvania State University, 2017</p>
-        </div>
-        <div class="education-item">
-            <h5>Certifications: </h5>
-            <p>Python Web Development 2024</p>
-            <p>Automate with Python 2019</p>
-            <p>Google Adsense 2017</p>
-        </div>
-    </section>
-
-    
+    <!-- Professional Content (Summernote) -->
+    <div class="professional-content">
+        {{ profile.content|safe }}
+    </div>
 </div>
+
 {% endblock %}

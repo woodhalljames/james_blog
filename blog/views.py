@@ -2,13 +2,13 @@ from django.views.generic import ListView, DetailView
 from django.shortcuts import get_object_or_404, render, redirect
 from django.db.models import F
 from django.utils import timezone
-from .models import Post, NewsletterSubscriber
+from .models import Post, NewsletterSubscriber, BusinessProfile
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 import json
-from django.utils.crypto import get_random_string  # Add this import
+from django.utils.crypto import get_random_string
 from django.contrib import messages 
 from django.views.generic import TemplateView
 from .tasks import send_welcome_email, send_post_notification
@@ -203,21 +203,13 @@ def unsubscribe_newsletter(request, token):
     return render(request, 'email/unsubscribe_confirm.html', {'subscriber': subscriber})
 
 
-
 class BusinessView(TemplateView):
     template_name = 'business.html'
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # Add any additional context data you need for the business page
-        context['professional_title'] = "Project Manager"
-        context['business_profile'] = {
-            'name': 'James Woodhall',
-            'title': 'Project Manager',
-            'email': 'woodhalljames@gmail.com',  # Update with your business email
-              # Update with your LinkedIn
-            'github': 'https://github.com/woodhalljames'  # Update with your GitHub
-        }
+        profile = BusinessProfile.get_profile()
+        context['profile'] = profile
         return context
 
 
@@ -244,7 +236,6 @@ def error_400(request, exception):
                'error_message': 'Bad Request',
                }
     return render(request, 'error.html', context, status=400)
-
 
 
 def download_cv(request):
