@@ -11,13 +11,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = config("SECRET_KEY")
 
-DEBUG = config("DEBUG", cast=bool, default=True)
+DEBUG = config("DEBUG", cast=bool, default=False)
 ALLOWED_HOSTS = ['jameswoodhall.com', 'www.jameswoodhall.com', '*', '.vercel.app']
 
 # Security settings - only in production
-SECURE_SSL_REDIRECT = False
-SESSION_COOKIE_SECURE = False
-CSRF_COOKIE_SECURE = False
+SECURE_SSL_REDIRECT = not DEBUG
+SESSION_COOKIE_SECURE = not DEBUG
+CSRF_COOKIE_SECURE = not DEBUG
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 X_FRAME_OPTIONS = 'DENY'
@@ -35,7 +35,6 @@ INSTALLED_APPS = [
     'django_summernote',
     'django.contrib.sites',
     'django.contrib.sitemaps',
-  
 ]
 
 MIDDLEWARE = [
@@ -80,10 +79,9 @@ DATABASES = {
     }
 }
 
-DATABASE_URL = config("DATABASE_URL", cast=str)
+DATABASE_URL = config("DATABASE_URL", default=None)
 
-if DATABASE_URL is not None:
-    import dj_database_url
+if DATABASE_URL:
     DATABASES = {
         'default': dj_database_url.config(
             default=DATABASE_URL,
@@ -92,18 +90,24 @@ if DATABASE_URL is not None:
         )
     }
 
+# Cloudflare R2 Configuration
 CLOUDFLARE_R2_BUCKET = config("CLOUDFLARE_R2_BUCKET")
 CLOUDFLARE_R2_ACCESS_KEY = config("CLOUDFLARE_R2_ACCESS_KEY")
 CLOUDFLARE_R2_SECRET_KEY = config("CLOUDFLARE_R2_SECRET_KEY")
 CLOUDFLARE_R2_BUCKET_ENDPOINT = config("CLOUDFLARE_R2_BUCKET_ENDPOINT")
+CLOUDFLARE_R2_PUBLIC_URL = config("CLOUDFLARE_R2_PUBLIC_URL", default=f"https://{CLOUDFLARE_R2_BUCKET}.r2.dev")
 
 CLOUDFLARE_R2_CONFIG_OPTIONS = {
     "bucket_name": CLOUDFLARE_R2_BUCKET,
     "access_key": CLOUDFLARE_R2_ACCESS_KEY,
     "secret_key": CLOUDFLARE_R2_SECRET_KEY,
     "endpoint_url": CLOUDFLARE_R2_BUCKET_ENDPOINT,
+    "custom_domain": CLOUDFLARE_R2_PUBLIC_URL,
     "default_acl": "public-read",
     "signature_version": "s3v4",
+    "region_name": "auto",
+    "file_overwrite": False,
+    "querystring_auth": False,
 }
 
 STORAGES = {
@@ -137,34 +141,73 @@ TIME_ZONE = "UTC"
 USE_I18N = True
 USE_TZ = True
 
-STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR / 'staticfiles')
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static")
-]
-MEDIA_URL = '/media/'
+STATIC_URL = f"{CLOUDFLARE_R2_PUBLIC_URL}/static/"
+MEDIA_URL = f"{CLOUDFLARE_R2_PUBLIC_URL}/media/"
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# Email Configuration
+# Email Configuration - PRODUCTION READY
 SITE_NAME = 'James\' Blog'
 SITE_URL = 'https://jameswoodhall.com'
-SITE_LOGO = '/static/img/logo.png'  # Add your logo path
+SITE_LOGO = '/static/img/logo.png'
+
+# Email settings with proper error handling
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
 EMAIL_HOST_USER = config("EMAIL_HOST_USER")
-EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
-DEFAULT_FROM_EMAIL = "James <woodhalljames@gmail.com>"
+EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")  # Must be App Password
+DEFAULT_FROM_EMAIL = f"{SITE_NAME} <{config('EMAIL_HOST_USER')}>"
+SERVER_EMAIL = DEFAULT_FROM_EMAIL
+EMAIL_TIMEOUT = 30
 
+# Logging configuration for email debugging
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+        'file': {
+            'class': 'logging.FileHandler',
+            'filename': BASE_DIR / 'debug.log',
+            'formatter': 'verbose',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'INFO',
+        },
+        'blog': {
+            'handlers': ['console', 'file'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+    },
+}
+
+# Summernote Configuration - PRODUCTION READY
 SUMMERNOTE_CONFIG = {
     'attachment_storage_class': 'helpers.cloudflare.storages.MediaFileStorage',
     'attachment_filesize_limit': 10 * 1024 * 1024,
     'attachment_model': 'blog.SummernoteAttachment',
     'disable_attachment': False,
     'attachment_require_authentication': True,
+    'attachment_upload_to': 'summernote/%Y/%m/%d/',
     
     # DISABLE HTML SANITIZATION - allows custom HTML/CSS
     'disable_server_side_validation': True,
@@ -174,24 +217,36 @@ SUMMERNOTE_CONFIG = {
             ['style', ['style']],
             ['font', ['bold', 'italic', 'underline', 'clear']],
             ['fontname', ['fontname']],
+            ['fontsize', ['fontsize']],
             ['color', ['color']],
             ['para', ['ul', 'ol', 'paragraph']],
+            ['height', ['height']],
             ['table', ['table']],
             ['insert', ['link', 'picture', 'video']],
             ['view', ['fullscreen', 'codeview', 'help']],
         ],
-        'styleTags': ['p', 'h2', 'h3', 'h4', 'blockquote'],
+        'styleTags': ['p', 'h2', 'h3', 'h4', 'blockquote', 'pre'],
         'width': '100%',
         'height': '480',
+        'codemirror': {
+            'mode': 'htmlmixed',
+            'lineNumbers': True,
+            'theme': 'monokai',
+        },
     },
     
     'lazy': False,
     'iframe': False,
 }
+
 # Cache Configuration
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
         'LOCATION': 'James_Cache',
+        'TIMEOUT': 3600,
+        'OPTIONS': {
+            'MAX_ENTRIES': 1000
+        }
     }
 }
