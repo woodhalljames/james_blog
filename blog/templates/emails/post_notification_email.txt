@@ -1,5 +1,5 @@
 {{ post_title }}
-{{ "=" * post_title|length }}
+================================================================================
 
 By James | {{ post_date }} | {{ reading_time }} min read
 

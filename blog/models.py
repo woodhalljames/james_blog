@@ -4,7 +4,7 @@ from django.urls import reverse
 from django.contrib.auth.models import User
 from django.utils import timezone
 from django.core.exceptions import ValidationError
-from django_summernote.fields import SummernoteTextField
+# SummernoteTextField removed - using regular TextField now to prevent sanitization
 from django_summernote.models import AbstractAttachment
 from taggit.managers import TaggableManager
 from PIL import Image
@@ -14,6 +14,7 @@ import json
 from django.utils.html import strip_tags
 from django.core.files import File
 from django.conf import settings
+from django.core.files.storage import default_storage
 
 
 class Author(models.Model):
@@ -54,7 +55,9 @@ class Post(models.Model):
         on_delete=models.PROTECT,
         related_name='posts'
     )
-    content = SummernoteTextField(
+    # CHANGED: Using TextField instead of SummernoteTextField to prevent sanitization
+    # The admin still uses Summernote editor, but the field doesn't apply sanitization
+    content = models.TextField(
         help_text="Blog post content with rich text formatting and images"
     )
 
@@ -358,7 +361,18 @@ class PostLike(models.Model):
 
 
 class SummernoteAttachment(AbstractAttachment):
-    """Model to store Summernote attachments/images"""
+    """
+    UPDATED: Model to store Summernote attachments/images with proper storage handling
+    
+    This model now uses the default storage backend configured in settings.STORAGES
+    instead of trying to instantiate storage directly in migrations.
+    """
+    
+    # Override the file field to use default storage properly
+    file = models.FileField(
+        upload_to='summernote/%Y/%m/%d/',
+        storage=default_storage,  # Use the default storage from settings
+    )
     
     def __str__(self):
         return self.name if self.name else str(self.file.name)
@@ -421,7 +435,8 @@ class BusinessProfile(models.Model):
         help_text="Upload your resume/CV PDF for download"
     )
     
-    content = SummernoteTextField(
+    # CHANGED: Using TextField instead of SummernoteTextField to prevent sanitization
+    content = models.TextField(
         help_text="Your professional profile content - add your summary, experience, projects, education, etc.",
         blank=True
     )

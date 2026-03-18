@@ -1,5 +1,6 @@
 """
 Django settings for james_blog project.
+UPDATED: Fixed image persistence by completely disabling HTML sanitization
 """
 from decouple import config
 import os
@@ -150,7 +151,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # Email Configuration
 SITE_NAME = 'James\' Blog'
 SITE_URL = 'https://jameswoodhall.com'
-SITE_LOGO = '/static/img/logo.png'  # Add your logo path
+SITE_LOGO = '/static/img/logo.png'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
@@ -159,35 +160,125 @@ EMAIL_HOST_USER = config("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
 DEFAULT_FROM_EMAIL = "James <woodhalljames@gmail.com>"
 
+# Logging Configuration
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+        'file': {
+            'class': 'logging.FileHandler',
+            'filename': BASE_DIR / 'debug.log',
+            'formatter': 'verbose',
+        },
+    },
+    'loggers': {
+        'blog': {
+            'handlers': ['console', 'file'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'django': {
+            'handlers': ['console'],
+            'level': 'INFO',
+        },
+    },
+}
+
+# CRITICAL: SUMMERNOTE CONFIGURATION - COMPLETE SANITIZATION DISABLED
 SUMMERNOTE_CONFIG = {
+    # Storage configuration
     'attachment_storage_class': 'helpers.cloudflare.storages.MediaFileStorage',
-    'attachment_filesize_limit': 10 * 1024 * 1024,
+    'attachment_filesize_limit': 10 * 1024 * 1024,  # 10MB
     'attachment_model': 'blog.SummernoteAttachment',
-    'disable_attachment': False,
+    'attachment_upload_to': 'summernote/%Y/%m/%d/',
     'attachment_require_authentication': True,
+    'disable_attachment': False,
     
-    # DISABLE HTML SANITIZATION - allows custom HTML/CSS
+    # CRITICAL: Disable ALL sanitization and validation
     'disable_server_side_validation': True,
+    'sanitize': False,  # CRITICAL: This stops all HTML cleaning
     
+    # Bleach configuration (even if bleach is installed, this prevents sanitization)
+    'bleach': {
+        'allowed_tags': [],  # Empty means allow all tags
+        'allowed_attrs': {},  # Empty means allow all attributes
+        'allowed_styles': [],  # Empty means allow all styles
+    },
+    
+    # Editor configuration
     'summernote': {
         'toolbar': [
             ['style', ['style']],
-            ['font', ['bold', 'italic', 'underline', 'clear']],
+            ['font', ['bold', 'italic', 'underline', 'strikethrough', 'clear']],
             ['fontname', ['fontname']],
+            ['fontsize', ['fontsize']],
             ['color', ['color']],
             ['para', ['ul', 'ol', 'paragraph']],
+            ['height', ['height']],
             ['table', ['table']],
             ['insert', ['link', 'picture', 'video']],
             ['view', ['fullscreen', 'codeview', 'help']],
         ],
-        'styleTags': ['p', 'h2', 'h3', 'h4', 'blockquote'],
+        'styleTags': ['p', 'h2', 'h3', 'h4', 'h5', 'h6', 'blockquote', 'pre'],
+        'fontNames': ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New', 'Helvetica', 
+                      'Impact', 'Tahoma', 'Times New Roman', 'Verdana'],
+        'fontSizes': ['8', '9', '10', '11', '12', '14', '16', '18', '20', '24', '28', '32', '36', '48'],
         'width': '100%',
         'height': '480',
+        'codemirror': {
+            'mode': 'htmlmixed',
+            'lineNumbers': True,
+            'theme': 'monokai',
+        },
+        'popover': {
+            'image': [
+                ['image', ['resizeFull', 'resizeHalf', 'resizeQuarter', 'resizeNone']],
+                ['float', ['floatLeft', 'floatRight', 'floatNone']],
+                ['remove', ['removeMedia']]
+            ],
+            'link': [
+                ['link', ['linkDialogShow', 'unlink']]
+            ],
+            'table': [
+                ['add', ['addRowDown', 'addRowUp', 'addColLeft', 'addColRight']],
+                ['delete', ['deleteRow', 'deleteCol', 'deleteTable']],
+            ],
+        },
+        # CRITICAL: Don't clean pasted content
+        'disableDragAndDrop': False,
+        'shortcuts': True,
+        'tabDisable': False,
     },
     
     'lazy': False,
     'iframe': False,
+    
+    # Load Font Awesome from CDN for toolbar icons
+    'css': (
+        '//cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css',
+    ),
+    'css_for_inplace': (
+        '//cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css',
+    ),
+    
+    # CRITICAL: Don't use iframe which can cause content issues
+    'iframe': False,
+    
+    # Ensure content is preserved exactly as entered
+    'airMode': False,
+    'lang': 'en-US',
 }
+
 # Cache Configuration
 CACHES = {
     'default': {

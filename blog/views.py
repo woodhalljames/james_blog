@@ -198,9 +198,9 @@ def unsubscribe_newsletter(request, token):
     if request.method == "POST":
         subscriber.is_active = False
         subscriber.save()
-        return render(request, 'email/unsubscribe_success.html')
-        
-    return render(request, 'email/unsubscribe_confirm.html', {'subscriber': subscriber})
+        return render(request, 'emails/unsubscribe_success.html')
+
+    return render(request, 'emails/unsubscribe_confirm.html', {'subscriber': subscriber})
 
 
 class BusinessView(TemplateView):
