@@ -8,6 +8,9 @@ from django.conf.urls.static import static
 from django.contrib.sitemaps.views import sitemap
 from blog.sitemaps import PostSitemap, StaticViewSitemap
 from django.views.generic import TemplateView
+from decouple import config
+
+ADMIN_URL = config('ADMIN_URL', default='admin')
 
 sitemaps = {
     'posts': PostSitemap,
@@ -15,7 +18,7 @@ sitemaps = {
 }
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
+    path(f"{ADMIN_URL}/", admin.site.urls),
     path("", include("blog.urls", namespace="blog")),
     path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, 
          name='django.contrib.sitemaps.views.sitemap'),
