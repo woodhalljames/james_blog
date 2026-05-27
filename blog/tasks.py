@@ -71,7 +71,7 @@ def send_welcome_email(subscriber_id):
         return False
 
 
-def send_post_notification_batch(post_id, delay_seconds=0):
+def send_post_notification_batch(post_id, delay_seconds=1):
     """
     UPDATED: Sends blog post notifications to all active subscribers with comprehensive error handling.
     
@@ -169,6 +169,11 @@ def send_post_notification_batch(post_id, delay_seconds=0):
             try:
                 logger.debug(f"[{index}/{results['total_subscribers']}] Processing {subscriber.email}")
                 
+                # Ensure the subscriber has an unsubscribe token (admin-created subscribers may not)
+                if not subscriber.confirmation_token:
+                    subscriber.confirmation_token = get_random_string(64)
+                    subscriber.save(update_fields=['confirmation_token'])
+
                 # Add subscriber-specific unsubscribe URL
                 context = base_context.copy()
                 context['unsubscribe_url'] = f"{site_url}{reverse('blog:unsubscribe', args=[subscriber.confirmation_token])}"

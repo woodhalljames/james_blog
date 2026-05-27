@@ -21,7 +21,7 @@ SESSION_COOKIE_SECURE = False
 CSRF_COOKIE_SECURE = False
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
-X_FRAME_OPTIONS = 'DENY'
+X_FRAME_OPTIONS = 'SAMEORIGIN'
 SITE_ID = 1
 
 INSTALLED_APPS = [
@@ -98,6 +98,8 @@ CLOUDFLARE_R2_ACCESS_KEY = config("CLOUDFLARE_R2_ACCESS_KEY")
 CLOUDFLARE_R2_SECRET_KEY = config("CLOUDFLARE_R2_SECRET_KEY")
 CLOUDFLARE_R2_BUCKET_ENDPOINT = config("CLOUDFLARE_R2_BUCKET_ENDPOINT")
 
+R2_PUBLIC_CDN = "pub-9eb67c1c49104c9e8600d28556b91096.r2.dev"
+
 CLOUDFLARE_R2_CONFIG_OPTIONS = {
     "bucket_name": CLOUDFLARE_R2_BUCKET,
     "access_key": CLOUDFLARE_R2_ACCESS_KEY,
@@ -105,18 +107,33 @@ CLOUDFLARE_R2_CONFIG_OPTIONS = {
     "endpoint_url": CLOUDFLARE_R2_BUCKET_ENDPOINT,
     "default_acl": "public-read",
     "signature_version": "s3v4",
+    # Use public CDN URL for all file URLs (no expiring signed URLs)
+    "custom_domain": R2_PUBLIC_CDN,
+    "querystring_auth": False,
 }
 
-STORAGES = {
-    "default": {
-        "BACKEND": "helpers.cloudflare.storages.MediaFileStorage",
-        "OPTIONS": CLOUDFLARE_R2_CONFIG_OPTIONS
-    },
-    "staticfiles": {
-        "BACKEND": "helpers.cloudflare.storages.StaticFileStorage",
-        "OPTIONS": CLOUDFLARE_R2_CONFIG_OPTIONS
+if DEBUG:
+    # In development: serve static files from local filesystem so admin/summernote CSS loads
+    STORAGES = {
+        "default": {
+            "BACKEND": "helpers.cloudflare.storages.MediaFileStorage",
+            "OPTIONS": CLOUDFLARE_R2_CONFIG_OPTIONS
+        },
+        "staticfiles": {
+            "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+        }
     }
-}
+else:
+    STORAGES = {
+        "default": {
+            "BACKEND": "helpers.cloudflare.storages.MediaFileStorage",
+            "OPTIONS": CLOUDFLARE_R2_CONFIG_OPTIONS
+        },
+        "staticfiles": {
+            "BACKEND": "helpers.cloudflare.storages.StaticFileStorage",
+            "OPTIONS": CLOUDFLARE_R2_CONFIG_OPTIONS
+        }
+    }
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -138,13 +155,18 @@ TIME_ZONE = "UTC"
 USE_I18N = True
 USE_TZ = True
 
-STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR / 'staticfiles')
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static")
 ]
-MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+if DEBUG:
+    STATIC_URL = '/static/'
+    MEDIA_URL = '/media/'
+else:
+    STATIC_URL = 'https://pub-9eb67c1c49104c9e8600d28556b91096.r2.dev/static/'
+    MEDIA_URL = 'https://pub-9eb67c1c49104c9e8600d28556b91096.r2.dev/media/'
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
@@ -189,27 +211,23 @@ LOGGING = {
     },
 }
 
-# CRITICAL: SUMMERNOTE CONFIGURATION - COMPLETE SANITIZATION DISABLED
+# SUMMERNOTE CONFIGURATION
 SUMMERNOTE_CONFIG = {
-    # Storage configuration
+    # Use iframe mode (default for admin) - avoids jQuery conflicts with Django admin
+    'iframe': True,
+
+    # Storage configuration for image attachments inserted into content
     'attachment_storage_class': 'helpers.cloudflare.storages.MediaFileStorage',
     'attachment_filesize_limit': 10 * 1024 * 1024,  # 10MB
     'attachment_model': 'blog.SummernoteAttachment',
     'attachment_upload_to': 'summernote/%Y/%m/%d/',
     'attachment_require_authentication': True,
     'disable_attachment': False,
-    
-    # CRITICAL: Disable ALL sanitization and validation
+
+    # Disable server-side HTML sanitization so rich content is preserved
     'disable_server_side_validation': True,
-    'sanitize': False,  # CRITICAL: This stops all HTML cleaning
-    
-    # Bleach configuration (even if bleach is installed, this prevents sanitization)
-    'bleach': {
-        'allowed_tags': [],  # Empty means allow all tags
-        'allowed_attrs': {},  # Empty means allow all attributes
-        'allowed_styles': [],  # Empty means allow all styles
-    },
-    
+    'sanitize': False,
+
     # Editor configuration
     'summernote': {
         'toolbar': [
@@ -225,7 +243,7 @@ SUMMERNOTE_CONFIG = {
             ['view', ['fullscreen', 'codeview', 'help']],
         ],
         'styleTags': ['p', 'h2', 'h3', 'h4', 'h5', 'h6', 'blockquote', 'pre'],
-        'fontNames': ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New', 'Helvetica', 
+        'fontNames': ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New', 'Helvetica',
                       'Impact', 'Tahoma', 'Times New Roman', 'Verdana'],
         'fontSizes': ['8', '9', '10', '11', '12', '14', '16', '18', '20', '24', '28', '32', '36', '48'],
         'width': '100%',
@@ -249,27 +267,12 @@ SUMMERNOTE_CONFIG = {
                 ['delete', ['deleteRow', 'deleteCol', 'deleteTable']],
             ],
         },
-        # CRITICAL: Don't clean pasted content
         'disableDragAndDrop': False,
         'shortcuts': True,
         'tabDisable': False,
     },
-    
+
     'lazy': False,
-    'iframe': False,
-    
-    # Load Font Awesome from CDN for toolbar icons
-    'css': (
-        '//cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css',
-    ),
-    'css_for_inplace': (
-        '//cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css',
-    ),
-    
-    # CRITICAL: Don't use iframe which can cause content issues
-    'iframe': False,
-    
-    # Ensure content is preserved exactly as entered
     'airMode': False,
     'lang': 'en-US',
 }
