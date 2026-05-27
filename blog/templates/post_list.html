@@ -8,21 +8,44 @@
 
     <div class="post-grid">
         {% for post in posts %}
-            <div class="post-card">
-                {% if post.featured_image %}
-                    <a href="{{ post.get_absolute_url }}" class="post-image">
-                        <div class="image-item" style="aspect-ratio: 1/1; overflow: hidden; display: flex; align-items: center; justify-content: center;">
-                            <img src="{{ post.featured_image.url }}" 
-                                 alt="{{ post.featured_image_alt|default:post.title }}"
-                                 loading="lazy"
-                                 style="min-width: 100%; min-height: 100%; object-fit: cover; object-position: center;">
-                        </div>
-                    </a>
-                {% endif %}
+            {% if post.featured_image %}
+            <div class="post-card fade-target">
+                <a href="{{ post.get_absolute_url }}" class="post-image">
+                    <div class="image-item" style="aspect-ratio: 1/1; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                        <img src="{{ post.featured_image.url }}"
+                             alt="{{ post.featured_image_alt|default:post.title }}"
+                             loading="lazy"
+                             style="min-width: 100%; min-height: 100%; object-fit: cover; object-position: center;">
+                    </div>
+                    <div class="post-overlay">
+                        <span><i class="fas fa-heart"></i> {{ post.like_count }}</span>
+                        <span><i class="fas fa-eye"></i> {{ post.view_count }}</span>
+                    </div>
+                </a>
             </div>
+            {% endif %}
         {% empty %}
             <p>No posts.</p>
         {% endfor %}
     </div>
 </div>
+
+<script>
+(function() {
+    // Fade-in on scroll
+    var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(e) {
+            if (e.isIntersecting) {
+                e.target.classList.add('visible');
+                observer.unobserve(e.target);
+            }
+        });
+    }, { threshold: 0.05 });
+
+    document.querySelectorAll('.fade-target').forEach(function(el) {
+        observer.observe(el);
+    });
+
+})();
+</script>
 {% endblock %}

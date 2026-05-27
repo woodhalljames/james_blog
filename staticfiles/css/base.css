@@ -1220,3 +1220,106 @@
         border: 1px solid #eee;
     }
 }
+
+/* ── Home page polish ── */
+
+body { background-color: #fff; }
+
+/* Gradient ring on profile photo */
+.profile-image-link {
+    border-radius: 50%;
+    padding: 3px;
+    background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+    margin-right: 30px;
+    flex-shrink: 0;
+}
+.profile-image-link:hover { opacity: 0.85; }
+.profile-image {
+    margin-right: 0;
+    border: 2px solid #fff;
+}
+
+/* Tighter grid gap */
+.post-grid { gap: 3px; }
+
+/* Post hover overlay */
+.post-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 600;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    pointer-events: none;
+}
+@media (hover: hover) and (pointer: fine) {
+    .post-image:hover .post-overlay { opacity: 1; }
+}
+
+/* Fade-in on scroll */
+.fade-target {
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+.fade-target.visible { opacity: 1; transform: none; }
+
+/* Tag filter pills */
+.tag-pills {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 10px 0 14px;
+    scrollbar-width: none;
+}
+.tag-pills::-webkit-scrollbar { display: none; }
+.tag-pill {
+    flex-shrink: 0;
+    padding: 4px 14px;
+    border-radius: 20px;
+    border: 1px solid #dbdbdb;
+    background: #fff;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+}
+.tag-pill.active,
+.tag-pill:hover {
+    background: #262626;
+    color: #fff;
+    border-color: #262626;
+}
+
+/* Stacked profile stats */
+.profile-stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: inherit;
+    min-width: 60px;
+}
+.stat-number {
+    font-size: 1.1rem;
+    font-weight: 700;
+    line-height: 1.1;
+    color: #262626;
+}
+.stat-label {
+    font-size: 0.75rem;
+    color: #8e8e8e;
+    margin-top: 2px;
+}
+
+/* Profile / grid divider */
+.profile-divider {
+    border: none;
+    border-top: 1px solid #dbdbdb;
+    margin: 0;
+}

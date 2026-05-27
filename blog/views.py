@@ -50,16 +50,21 @@ class PostListView(PublishedPostMixin, ListView):
         tag_slug = self.kwargs.get('tag_slug')
         if tag_slug:
             tag = get_object_or_404(Tag, slug=tag_slug)
-            return Post.objects.filter(tags__in=[tag])
+            return Post.objects.filter(
+                tags__in=[tag], is_published=True
+            ).select_related('author').prefetch_related('tags')
         return Post.objects.filter(
             is_published=True,
             published_at__lte=timezone.now()
-        ).select_related('author').order_by('-published_at')
+        ).select_related('author').prefetch_related('tags').order_by('-published_at')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         if self.kwargs.get('tag_slug'):
             context['tag'] = get_object_or_404(Tag, slug=self.kwargs['tag_slug'])
+        context['all_tags'] = Tag.objects.filter(
+            post__is_published=True
+        ).distinct().order_by('name')
         return context
 
     

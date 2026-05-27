@@ -97,10 +97,12 @@
     font-family: 'Roboto', sans-serif;
     line-height: 1.6;
     color: #333;
-    background-color: #f9f9f9;
+    background-color: #fff;
     margin: 0;
     padding: 0;
     min-height: 100vh;
+    display: flex;
+    flex-direction: column;
   }
   
   /* Post body styles */
@@ -668,10 +670,14 @@
   }
   
   .main-container {
-    max-width: 1200px;  /* Adjust this value as needed */
+    max-width: 1200px;
     margin: 0 auto;
-    padding: 0 2px;  /* This adds padding on the left and right */
+    padding: 0 2px;
     box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    width: 100%;
   }
   
   @media (min-width: 1240px) {  /* Adjust this breakpoint as needed */
@@ -689,6 +695,9 @@
   
   .content-padding {
     padding: 2px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
   }
   
   .post-header {
@@ -782,7 +791,7 @@
 }
 
 .footer {
-    background-color: #f9f9f9;
+    background-color: #fff;
     padding: 40px 0;
     margin-top: 20px;
     border-top: 1px solid #eee;
@@ -809,7 +818,7 @@
 
 .subscribe-button {
     padding: 8px 12px;
-    background-color: #f9f9f9;
+    background-color: #fff;
     border: 1px solid #ddd;
     border-left: none;  /* Remove left border since it's touching input */
     border-radius: 0 4px 4px 0;  /* Rounded corners only on right side */
@@ -1219,4 +1228,123 @@
         box-shadow: none;
         border: 1px solid #eee;
     }
+}
+
+/* ── Home page polish ── */
+
+#content { flex: 1; }
+
+/* Left-align profile text */
+.profile-content {
+    align-items: flex-start;
+}
+
+/* Remove Bootstrap's default ul indent from stats */
+.profile-stats,
+.profile-stats ul {
+    padding-left: 0;
+    margin-left: 0;
+}
+
+/* Profile size & text scale */
+.profile-image {
+    width: 165px;
+    height: 165px;
+}
+.profile-user-name { font-size: 26px; }
+.profile-bio { font-size: 15px; }
+.stat-number { font-size: 15px; }
+.stat-label { font-size: 15px; }
+
+body { background-color: #fff; }
+
+/* Profile image link */
+.profile-image-link {
+    margin-right: 30px;
+    flex-shrink: 0;
+}
+.profile-image-link:hover { opacity: 0.85; }
+
+/* Tighter grid gap */
+.post-grid { gap: 3px; }
+
+/* Post hover overlay */
+.post-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    color: #fff;
+    font-size: 1.3rem;
+    font-weight: 600;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    pointer-events: none;
+}
+@media (hover: hover) and (pointer: fine) {
+    .post-image:hover .post-overlay { opacity: 1; }
+}
+
+/* Fade-in on scroll */
+.fade-target {
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+.fade-target.visible { opacity: 1; transform: none; }
+
+/* Tag filter pills */
+.tag-pills {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 10px 0 14px;
+    scrollbar-width: none;
+}
+.tag-pills::-webkit-scrollbar { display: none; }
+.tag-pill {
+    flex-shrink: 0;
+    padding: 4px 14px;
+    border-radius: 20px;
+    border: 1px solid #dbdbdb;
+    background: #fff;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+}
+.tag-pill.active,
+.tag-pill:hover {
+    background: #262626;
+    color: #fff;
+    border-color: #262626;
+}
+
+/* Stacked profile stats */
+.profile-stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: inherit;
+}
+.stat-number {
+    font-size: 0.85rem;
+    font-weight: 700;
+    line-height: 1.1;
+    color: #262626;
+}
+.stat-label {
+    font-size: 0.65rem;
+    color: #8e8e8e;
+    margin-top: 1px;
+}
+
+/* Profile / grid divider */
+.profile-divider {
+    border: none;
+    border-top: 1px solid #dbdbdb;
+    margin: 0;
 }

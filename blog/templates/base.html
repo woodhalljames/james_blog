@@ -65,12 +65,24 @@
                 <p class="profile-bio">Writing about things that make life enjoyable. </p>
                 <div class="profile-stats">
                     <ul>
-                        <li><a class="profile-stat-count" href="{% url 'blog:post_list' %}">{% total_posts %} Posts</a></li>
-                        <li><a class="profile-stat-count" href="#newsletter-form" data-scroll-to="newsletter-form">{% total_subscribers %} Subscribers</a></li>
+                        <li>
+                            <a class="profile-stat-item" href="{% url 'blog:post_list' %}">
+                                <span class="stat-number">{% total_posts %}</span>
+                                <span class="stat-label">Posts</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="profile-stat-item" href="#newsletter-form">
+                                <span class="stat-number">{% total_subscribers %}</span>
+                                <span class="stat-label">Subscribers</span>
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </div>
         </div>
+
+        <hr class="profile-divider">
 
         <!-- Main Content -->
         <div id="content">
