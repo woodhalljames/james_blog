@@ -1,18 +1,55 @@
 {% extends "base.html" %}
-{% block title %}{{ post.title }} | by James Woodhall {% endblock %}
+{% block title %}{{ post.title }} | James Woodhall{% endblock %}
 
-{% block meta_description %}{{ post.meta_description }}{% endblock %}
+{% block meta_description %}<meta name="description" content="{{ post.meta_description|default:post.content|striptags|truncatechars:160 }}">{% endblock %}
 
-{% block meta_keywords %}{{ post.meta_keywords }}{% endblock %}
+{% block meta_keywords %}{% if post.meta_keywords %}<meta name="keywords" content="{{ post.meta_keywords }}">{% endif %}{% endblock %}
 
-{% block extra_meta %}
+{% block canonical %}<link rel="canonical" href="https://jameswoodhall.com{{ post.get_absolute_url }}">{% endblock %}
+
+{% block og_tags %}
     <meta property="og:title" content="{{ post.title }}">
-    <meta property="og:description" content="Writing about things that make life enjoyable.">
+    <meta property="og:description" content="{{ post.meta_description|default:post.content|striptags|truncatechars:160 }}">
     <meta property="og:type" content="article">
-    <meta property="og:url" content="{{ request.build_absolute_uri }}">
+    <meta property="og:url" content="https://jameswoodhall.com{{ post.get_absolute_url }}">
     {% if post.featured_image %}
-        <meta property="og:image" content="{{ post.featured_image.url }}">
+    <meta property="og:image" content="{{ post.featured_image.url }}">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta property="twitter:image" content="{{ post.featured_image.url }}">
+    {% else %}
+    <meta name="twitter:card" content="summary">
     {% endif %}
+    <meta property="twitter:title" content="{{ post.title }}">
+    <meta property="twitter:description" content="{{ post.meta_description|default:post.content|striptags|truncatechars:160 }}">
+    <meta property="twitter:url" content="https://jameswoodhall.com{{ post.get_absolute_url }}">
+    <meta property="article:published_time" content="{{ post.published_at|date:'c' }}">
+    <meta property="article:modified_time" content="{{ post.updated_at|date:'c' }}">
+    <meta property="article:author" content="James Woodhall">
+{% endblock %}
+
+{% block structured_data %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "{{ post.title|escapejs }}",
+  "description": "{{ post.meta_description|default:post.content|striptags|truncatechars:160|escapejs }}",
+  "url": "https://jameswoodhall.com{{ post.get_absolute_url }}",
+  "datePublished": "{{ post.published_at|date:'c' }}",
+  "dateModified": "{{ post.updated_at|date:'c' }}",
+  {% if post.featured_image %}"image": "{{ post.featured_image.url }}",{% endif %}
+  "author": {
+    "@type": "Person",
+    "name": "James Woodhall",
+    "url": "https://jameswoodhall.com"
+  },
+  "publisher": {
+    "@type": "Person",
+    "name": "James Woodhall",
+    "url": "https://jameswoodhall.com"
+  }
+}
+</script>
 {% endblock %}
 
 {% block content %}

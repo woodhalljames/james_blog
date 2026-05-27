@@ -7,10 +7,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}@james{% endblock %}</title>
-    <meta name="description" content="Writing about things that make life enjoyable.">
-    <meta name="keywords" content="life blog, personal essays, motorcycle, motobike, motorcycles, motobiking, finance, investing, stocks, life enjoyment, travel, how-to, magic the gathering, kayaking, software, moral good, finding happiness, well-being, mindfulness, joyful living, positive experiences, inspiration, personal growth, life reflection">
+    {% block meta_description %}<meta name="description" content="Writing about things that make life enjoyable.">{% endblock %}
+    {% block meta_keywords %}<meta name="keywords" content="life blog, personal essays, motorcycle, motobike, motorcycles, motobiking, finance, investing, stocks, life enjoyment, travel, how-to, magic the gathering, kayaking, software, moral good, finding happiness, well-being, mindfulness, joyful living, positive experiences, inspiration, personal growth, life reflection">{% endblock %}
     <meta name="author" content="James Woodhall">
-    <link rel="canonical" href="https://jameswoodhall.com/">
+    {% block canonical %}<link rel="canonical" href="{{ request.build_absolute_uri }}">{% endblock %}
     <script src="{% static 'js/like_button.js' %}" defer></script>
     <script src="{% static 'js/newsletter.js' %}" defer></script>
     <link rel="preload" href="{% static 'js/like_button.js' %}" as="script">
@@ -20,8 +20,9 @@
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
     <link rel="icon" type="image/x-icon" href="https://images.emojiterra.com/google/android-11/1024px/1f306.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+
     <meta name="robots" content="index, follow">
+    {% block structured_data %}
     <script type="application/ld+json">
         {
           "@context": "http://schema.org",
@@ -34,18 +35,22 @@
             "name": "James Woodhall"
           }
         }
-        </script>
+    </script>
+    {% endblock %}
     <!-- Social Meta Tags -->
-    <meta property="og:title" content="James' Blog.">
+    {% block og_tags %}
+    <meta property="og:title" content="James' Blog">
     <meta property="og:description" content="Writing about things that make life enjoyable.">
     <meta property="og:image" content="{% static 'img/social.jpg' %}">
     <meta property="og:url" content="{{ request.build_absolute_uri }}">
-    <meta property="og:type" content="article">
-    <meta name="twitter:card" content="{% static 'img/social.jpg'%}">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="{{ request.build_absolute_uri }}">
     <meta property="twitter:title" content="James' Blog">
     <meta property="twitter:description" content="Writing about things that make life enjoyable.">
-    <meta property="twitter:image" content="{% static 'profile_pic/social.jpg' %}">
+    <meta property="twitter:image" content="{% static 'img/social.jpg' %}">
+    {% endblock %}
+    {% block extra_meta %}{% endblock %}
 </head>
 
 <body class="main-container">

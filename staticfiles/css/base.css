@@ -1345,6 +1345,6 @@ body { background-color: #fff; }
 /* Profile / grid divider */
 .profile-divider {
     border: none;
-    border-top: 1px solid #dbdbdb;
+    border-top: 1px solid #eee;
     margin: 0;
 }
