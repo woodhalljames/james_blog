@@ -331,4 +331,4 @@ class BusinessProfileAdmin(SummernoteModelAdmin):
         return not BusinessProfile.objects.exists()
     
     def has_delete_permission(self, request, obj=None):
-        return False
+        return True
