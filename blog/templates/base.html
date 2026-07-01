@@ -8,9 +8,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}@james{% endblock %}</title>
     {% block meta_description %}<meta name="description" content="Writing about things that make life enjoyable.">{% endblock %}
-    {% block meta_keywords %}<meta name="keywords" content="life blog, personal essays, motorcycle, motobike, motorcycles, motobiking, finance, investing, stocks, life enjoyment, travel, how-to, magic the gathering, kayaking, software, moral good, finding happiness, well-being, mindfulness, joyful living, positive experiences, inspiration, personal growth, life reflection">{% endblock %}
+    {% block meta_keywords %}<meta name="keywords" content="James Woodhall, Pittsburgh, Pennsylvania, Freeport, blog, good reads, cats, card games, travel, fun, personal essays, motorcycle, finance, investing, life enjoyment, magic the gathering, kayaking, software, mindfulness, personal growth">{% endblock %}
     <meta name="author" content="James Woodhall">
     {% block canonical %}<link rel="canonical" href="{{ request.build_absolute_uri }}">{% endblock %}
+    <link rel="alternate" type="application/rss+xml" title="James' Blog" href="{% url 'blog:rss_feed' %}">
     <script src="{% static 'js/like_button.js' %}" defer></script>
     <script src="{% static 'js/newsletter.js' %}" defer></script>
     <link rel="preload" href="{% static 'js/like_button.js' %}" as="script">

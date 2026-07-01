@@ -1,5 +1,6 @@
 User-agent: *
 Allow: /
 Disallow: /summernote/
+Disallow: /business/
 
 Sitemap: https://jameswoodhall.com/sitemap.xml

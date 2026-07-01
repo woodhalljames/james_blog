@@ -1,5 +1,6 @@
 from django.urls import path, include
 from . import views
+from .feeds import LatestPostsFeed
 
 
 
@@ -14,5 +15,5 @@ urlpatterns = [
     path('subscribe/', views.subscribe_newsletter, name='subscribe'),
     path('unsubscribe/<str:token>/', views.unsubscribe_newsletter, name='unsubscribe'),
     path('business/', views.BusinessView.as_view(), name='business'),
-
+    path('feed/', LatestPostsFeed(), name='rss_feed'),
 ]
