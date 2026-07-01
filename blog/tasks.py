@@ -1,4 +1,4 @@
-from django.core.mail import send_mail
+from django.core.mail import get_connection, EmailMultiAlternatives, send_mail
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from django.conf import settings
@@ -71,18 +71,13 @@ def send_welcome_email(subscriber_id):
         return False
 
 
-def send_post_notification_batch(post_id, delay_seconds=1):
+def send_post_notification_batch(post_id):
     """
-    UPDATED: Sends blog post notifications to all active subscribers with comprehensive error handling.
-    
-    This function implements Gmail-friendly rate limiting by adding delays between
-    emails to avoid hitting daily sending limits. It provides detailed progress
-    logging and continues sending even if individual emails fail.
-    
+    Sends blog post notifications to all active subscribers over a single SMTP connection.
+
     Args:
         post_id: The ID of the Post to notify about
-        delay_seconds: Seconds to wait between emails (default: 2)
-        
+
     Returns:
         dict: Statistics about the email sending process
     """
@@ -163,50 +158,41 @@ def send_post_notification_batch(post_id, delay_seconds=1):
             logger.debug(f"Featured image URL: {base_context['post_featured_image']}")
         
         logger.info("Starting email sending loop...")
-        
-        # Send emails with rate limiting
-        for index, subscriber in enumerate(subscribers, start=1):
-            try:
-                logger.debug(f"[{index}/{results['total_subscribers']}] Processing {subscriber.email}")
-                
-                # Ensure the subscriber has an unsubscribe token (admin-created subscribers may not)
-                if not subscriber.confirmation_token:
-                    subscriber.confirmation_token = get_random_string(64)
-                    subscriber.save(update_fields=['confirmation_token'])
 
-                # Add subscriber-specific unsubscribe URL
-                context = base_context.copy()
-                context['unsubscribe_url'] = f"{site_url}{reverse('blog:unsubscribe', args=[subscriber.confirmation_token])}"
-                
-                # Render email templates
-                html_message = render_to_string('emails/post_notification_email.html', context)
-                plain_message = render_to_string('emails/post_notification_email.txt', context)
-                
-                # Send email
-                send_mail(
-                    subject=f"New Post: {post.title}",
-                    message=plain_message,
-                    html_message=html_message,
-                    from_email=settings.DEFAULT_FROM_EMAIL,
-                    recipient_list=[subscriber.email],
-                    fail_silently=False,
-                )
-                
-                results['emails_sent'] += 1
-                logger.info(f"✅ [{results['emails_sent']}/{results['total_subscribers']}] Sent to {subscriber.email}")
-                
-                # Rate limiting: only sleep if explicitly configured (not on serverless)
-                if delay_seconds > 0 and index < results['total_subscribers']:
-                    logger.debug(f"Waiting {delay_seconds}s before next email...")
-                    time.sleep(delay_seconds)
-                
-            except Exception as email_error:
-                results['emails_failed'] += 1
-                results['failed_emails'].append(subscriber.email)
-                logger.error(f"❌ Failed to send to {subscriber.email}: {str(email_error)}")
-                logger.error(f"Error details: {traceback.format_exc()}")
-                # Continue with next subscriber even if this one failed
-                continue
+        with get_connection() as connection:
+            for index, subscriber in enumerate(subscribers, start=1):
+                try:
+                    logger.debug(f"[{index}/{results['total_subscribers']}] Processing {subscriber.email}")
+
+                    if not subscriber.confirmation_token:
+                        subscriber.confirmation_token = get_random_string(64)
+                        subscriber.save(update_fields=['confirmation_token'])
+
+                    context = base_context.copy()
+                    context['unsubscribe_url'] = f"{site_url}{reverse('blog:unsubscribe', args=[subscriber.confirmation_token])}"
+
+                    html_message = render_to_string('emails/post_notification_email.html', context)
+                    plain_message = render_to_string('emails/post_notification_email.txt', context)
+
+                    msg = EmailMultiAlternatives(
+                        subject=f"New Post: {post.title}",
+                        body=plain_message,
+                        from_email=settings.DEFAULT_FROM_EMAIL,
+                        to=[subscriber.email],
+                        connection=connection,
+                    )
+                    msg.attach_alternative(html_message, "text/html")
+                    msg.send()
+
+                    results['emails_sent'] += 1
+                    logger.info(f"✅ [{results['emails_sent']}/{results['total_subscribers']}] Sent to {subscriber.email}")
+
+                except Exception as email_error:
+                    results['emails_failed'] += 1
+                    results['failed_emails'].append(subscriber.email)
+                    logger.error(f"❌ Failed to send to {subscriber.email}: {str(email_error)}")
+                    logger.error(f"Error details: {traceback.format_exc()}")
+                    continue
         
         results['time_elapsed'] = round(time.time() - start_time, 2)
         
