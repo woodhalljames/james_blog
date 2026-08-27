@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}@james{% endblock %}</title>
     {% block meta_description %}<meta name="description" content="Writing about things that make life enjoyable.">{% endblock %}
-    {% block meta_keywords %}<meta name="keywords" content="James Woodhall, Pittsburgh, Pennsylvania, Freeport, blog, good reads, cats, card games, travel, fun, personal essays, motorcycle, finance, investing, life enjoyment, magic the gathering, kayaking, software, mindfulness, personal growth">{% endblock %}
+    {% block meta_keywords %}<meta name="keywords" content="James Woodhall, Pittsburgh, Pennsylvania, Freeport, blog, good reads, cats, card games, travel, fun, essays, motorcycle, history, finance, investing, joy, kayaking, software, mindfulness, personal growth">{% endblock %}
     <meta name="author" content="James Woodhall">
     {% block canonical %}<link rel="canonical" href="{{ request.build_absolute_uri }}">{% endblock %}
     <link rel="alternate" type="application/rss+xml" title="James' Blog" href="{% url 'blog:rss_feed' %}">
@@ -29,7 +29,7 @@
           "@context": "http://schema.org",
           "@type": "Blog",
           "name": "James' Blog",
-          "description": "Writing about things that make life enjoyable",
+          "description": "James Woodhall's writes about things that make life enjoyable",
           "url": "https://jameswoodhall.com",
           "author": {
             "@type": "Person",
@@ -78,10 +78,18 @@
                             </a>
                         </li>
                         <li>
-                            <a class="profile-stat-item" href="#newsletter-form">
+                            <a class="profile-stat-item" href="#newsletter-email">
                                 <span class="stat-number">{% total_subscribers %}</span>
                                 <span class="stat-label">Subscribers</span>
                             </a>
+                        </li>
+                        <li class="profile-stat-item newsletter-stat-item">
+                            <form id="newsletter-form" class="newsletter-form" method="post" action="{% url 'blog:subscribe' %}">
+                                {% csrf_token %}
+                                <input type="email" name="email" placeholder="Subscribe!" id="newsletter-email" required>
+                                <button type="submit" id="newsletter-submit" class="subscribe-button">🚀</button>
+                            </form>
+                            <div id="newsletter-message" class="newsletter-message"></div>
                         </li>
                     </ul>
                 </div>
@@ -98,16 +106,9 @@
         <!-- Footer -->
         <footer class="footer">
             <div class="footer-container">
-                <form id="newsletter-form" class="newsletter-form" method="post" action="{% url 'blog:subscribe' %}">
-                    {% csrf_token %}
-                    <input type="email" name="email" placeholder="Subscribe!" id="newsletter-email" required>
-                    <button type="submit" id="newsletter-submit" class="subscribe-button">🚀</button>
-                </form>
-                <div id="newsletter-message" class="newsletter-message"></div>
-               
                 <div class="footer-copyright">
-                    Made in USA <br>
-                    &hairsp;©{% now "Y" %} James' Blog
+                    Living in 🇺🇸<br>
+                    &copy;{% now "Y" %} James' Blog
                 </div>
             </div>
         </footer>

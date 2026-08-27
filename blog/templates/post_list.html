@@ -1,9 +1,17 @@
 {% extends "base.html" %}
 
+{% block title %}{% if tag %}#{{ tag.name }} posts | James' Blog{% else %}James' Blog | Writings on life, travel, history, food and the things that make it enjoyable{% endif %}{% endblock %}
+
+{% block meta_description %}
+<meta name="description" content="{% if tag %}Posts tagged '{{ tag.name }}' on James' Blog — writing about the things that make life enjoyable.{% else %}Essays on travel, cats, card games, motorcycles, and the things that make life enjoyable — written by James Woodhall.{% endif %}">
+{% endblock %}
+
 {% block content %}
 <div class="container">
     {% if tag %}
-        <h2>#{{ tag.name }}</h2>
+        <h1>#{{ tag.name }}</h1>
+    {% else %}
+        <h1 class="visually-hidden">James' Blog — essays on life, travel, and the things that make it enjoyable</h1>
     {% endif %}
 
     <div class="post-grid">

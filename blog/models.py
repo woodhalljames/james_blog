@@ -15,6 +15,7 @@ from django.utils.html import strip_tags
 from django.core.files import File
 from django.conf import settings
 from django.core.files.storage import default_storage
+from django.templatetags.static import static
 
 
 class Author(models.Model):
@@ -194,6 +195,13 @@ class Post(models.Model):
             site_url = settings.SITE_URL.rstrip('/')
             article_url = f"{site_url}{self.get_absolute_url()}"
 
+            def absolute(url):
+                # Media/static URLs are already absolute (served from the R2 CDN);
+                # only relative URLs need the site domain prepended.
+                if not url:
+                    return None
+                return url if url.startswith('http') else f"{site_url}{url}"
+
             schema = {
                 "@context": "https://schema.org",
                 "@type": "BlogPosting",
@@ -203,12 +211,9 @@ class Post(models.Model):
                 },
                 "headline": self.title,
                 "description": self.meta_description,
-                "image": [
-                    f"{site_url}{self.featured_image.url}" if self.featured_image else None
-                ],
                 "author": {
                     "@type": "Person",
-                    "name": self.author.full_name(),
+                    "name": self.author.full_name() or str(self.author),
                     "url": settings.SITE_URL,
                 },
                 "publisher": {
@@ -216,7 +221,7 @@ class Post(models.Model):
                     "name": settings.SITE_NAME,
                     "logo": {
                         "@type": "ImageObject",
-                        "url": f"{site_url}{settings.SITE_LOGO}"
+                        "url": absolute(static(settings.SITE_LOGO))
                     }
                 },
                 "datePublished": self.published_at.isoformat() if self.published_at else None,
@@ -225,6 +230,8 @@ class Post(models.Model):
                 "articleBody": strip_tags(self.content),
                 "wordCount": len(strip_tags(self.content).split()),
             }
+            if self.featured_image:
+                schema["image"] = [absolute(self.featured_image.url)]
 
             schema = {k: v for k, v in schema.items() if v is not None}
             return json.dumps(schema, ensure_ascii=False)

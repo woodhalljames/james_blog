@@ -233,11 +233,10 @@
   }
   
   .profile-image {
-    width: 150px;  
+    width: 150px;
     height: 150px;
     border-radius: 50%;
     overflow: hidden;
-    margin-right: 30px;
     flex-shrink: 0;
   }
   
@@ -311,11 +310,12 @@
   
   .profile-stats ul {
     display: flex;
+    align-items: center;
     list-style: none;
     padding: 0;
     margin: 0;
   }
-  
+
   .profile-stats li {
     font-size: 14px;
     margin-right: 15px;
@@ -344,7 +344,7 @@
       text-align: center;
     }
   
-    .profile-image {
+    .profile-image-link {
       margin-right: 0;
       margin-bottom: 15px;
     }
@@ -1264,6 +1264,12 @@ body { background-color: #fff; }
     flex-shrink: 0;
 }
 .profile-image-link:hover { opacity: 0.85; }
+
+@media (max-width: 600px) {
+    .profile-image-link {
+        margin-right: 0;
+    }
+}
 
 /* Tighter grid gap */
 .post-grid { gap: 3px; }

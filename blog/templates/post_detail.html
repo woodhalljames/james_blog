@@ -28,28 +28,7 @@
 {% endblock %}
 
 {% block structured_data %}
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BlogPosting",
-  "headline": "{{ post.title|escapejs }}",
-  "description": "{{ post.meta_description|default:post.content|striptags|truncatechars:160|escapejs }}",
-  "url": "https://jameswoodhall.com{{ post.get_absolute_url }}",
-  "datePublished": "{{ post.published_at|date:'c' }}",
-  "dateModified": "{{ post.updated_at|date:'c' }}",
-  {% if post.featured_image %}"image": "{{ post.featured_image.url }}",{% endif %}
-  "author": {
-    "@type": "Person",
-    "name": "James Woodhall",
-    "url": "https://jameswoodhall.com"
-  },
-  "publisher": {
-    "@type": "Person",
-    "name": "James Woodhall",
-    "url": "https://jameswoodhall.com"
-  }
-}
-</script>
+{{ schema_markup|safe }}
 {% endblock %}
 
 {% block content %}

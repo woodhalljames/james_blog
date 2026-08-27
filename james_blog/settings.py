@@ -173,7 +173,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # Email Configuration
 SITE_NAME = 'James\' Blog'
 SITE_URL = 'https://jameswoodhall.com'
-SITE_LOGO = '/static/img/logo.png'
+SITE_LOGO = 'img/social.jpg'  # relative to STATIC_URL; resolved via {% static %} so it works on the R2 CDN too
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
