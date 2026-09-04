@@ -11,11 +11,10 @@ import json
 from django.utils.crypto import get_random_string
 from django.contrib import messages 
 from django.views.generic import TemplateView
-from .tasks import send_welcome_email, send_post_notification
+from .tasks import send_welcome_email
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.cache import cache
 from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
-from django.contrib.admin.views.decorators import staff_member_required
 from django.conf import settings
 from django.views.decorators.cache import cache_page
 from django.utils.decorators import method_decorator
@@ -102,40 +101,6 @@ class PostDetailView(PublishedPostMixin, DetailView):
         self.object.increment_views()
         return response
     
-@staff_member_required
-def publish_post(request, post_id):
-    """
-    View to handle post publication and trigger notifications.
-    Ensures proper error handling and notification sending.
-    """
-    post = get_object_or_404(Post, id=post_id)
-    
-    try:
-        # Set publication fields
-        if not post.published_at:
-            post.published_at = timezone.now()
-        post.is_published = True
-        post.save()
-        
-        # Send notifications
-        notification_result = send_post_notification(post.id)
-        
-        if not notification_result.get('success'):
-            messages.warning(
-                request,
-                f"Post published but there was an error sending notifications: {notification_result.get('message')}"
-            )
-        else:
-            messages.success(
-                request,
-                f"Post published successfully. Sent to {notification_result.get('sent')} subscribers."
-            )
-            
-    except Exception as e:
-        messages.error(request, f"Error publishing post: {str(e)}")
-        
-    return redirect('blog:post_detail', slug=post.slug)
-
 @require_http_methods(["POST"])
 def like_post(request, post_id):
     #use cache to get current like
