@@ -1318,6 +1318,9 @@ body { background-color: #fff; }
     border: 1px solid #dbdbdb;
     background: #fff;
     font-size: 0.85rem;
+    color: #262626;
+    text-decoration: none;
+    white-space: nowrap;
     cursor: pointer;
     transition: background 0.15s, color 0.15s;
 }

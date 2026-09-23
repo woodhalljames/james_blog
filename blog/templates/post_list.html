@@ -9,6 +9,14 @@
 {% block content %}
 <div class="container">
     {% if tag %}
+        <nav class="tag-pills" aria-label="Browse by tag">
+            <a href="{% url 'blog:post_list' %}" class="tag-pill">All</a>
+            {% for t in all_tags %}
+                <a href="{% url 'blog:post_list_by_tag' t.slug %}"
+                   class="tag-pill{% if t.pk == tag.pk %} active{% endif %}"
+                   {% if t.pk == tag.pk %}aria-current="page"{% endif %}>#{{ t.name }}</a>
+            {% endfor %}
+        </nav>
         <h1>#{{ tag.name }}</h1>
     {% else %}
         <h1 class="visually-hidden">James' Blog — essays on life, travel, and the things that make it enjoyable</h1>
@@ -53,6 +61,13 @@
     document.querySelectorAll('.fade-target').forEach(function(el) {
         observer.observe(el);
     });
+
+    // Keep the selected tag visible in the scrollable pill row
+    var activePill = document.querySelector('.tag-pill.active');
+    if (activePill) {
+        var row = activePill.parentElement;
+        row.scrollLeft = activePill.offsetLeft - row.offsetLeft - (row.clientWidth - activePill.offsetWidth) / 2;
+    }
 
 })();
 </script>

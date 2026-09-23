@@ -1,6 +1,7 @@
 from django.views.generic import ListView, DetailView
 from django.shortcuts import get_object_or_404, render, redirect
 from django.db.models import F
+from django.db.models.functions import Lower
 from django.utils import timezone
 from .models import Post, NewsletterSubscriber, BusinessProfile
 from django.http import JsonResponse
@@ -63,7 +64,7 @@ class PostListView(PublishedPostMixin, ListView):
             context['tag'] = get_object_or_404(Tag, slug=self.kwargs['tag_slug'])
         context['all_tags'] = Tag.objects.filter(
             post__is_published=True
-        ).distinct().order_by('name')
+        ).distinct().order_by(Lower('name'))
         return context
 
     
