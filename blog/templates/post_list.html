@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 
-{% block title %}{% if tag %}#{{ tag.name }} posts | James' Blog{% else %}James' Blog | Writings on life, travel, history, food and the things that make it enjoyable{% endif %}{% endblock %}
+{% block title %}{% if tag %}#{{ tag.name }} posts | James' Blog{% else %}James' Blog | Writing about things that make life enjoyable{% endif %}{% endblock %}
 
 {% block meta_description %}
-<meta name="description" content="{% if tag %}Posts tagged '{{ tag.name }}' on James' Blog — writing about the things that make life enjoyable.{% else %}Essays on travel, cats, card games, motorcycles, and the things that make life enjoyable — written by James Woodhall.{% endif %}">
+<meta name="description" content="{% if tag %}Posts tagged '{{ tag.name }}' on James' Blog — writing about the things that make life enjoyable.{% endif %}">
 {% endblock %}
 
 {% block content %}
